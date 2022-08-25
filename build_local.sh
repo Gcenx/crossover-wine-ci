@@ -12,7 +12,7 @@ if [ -z "$CROSS_OVER_VERSION" ]; then
 fi
 
 # avoid weird linker errors with Xcode 10 and later
-export MACOSX_DEPLOYMENT_TARGET=10.14
+export MACOSX_DEPLOYMENT_TARGET=10.9
 
 # crossover source code to be downloaded
 export CROSS_OVER_SOURCE_URL=https://media.codeweavers.com/pub/crossover/source/crossover-sources-${CROSS_OVER_VERSION}.tar.gz
@@ -41,9 +41,6 @@ fi
 
 # Manually configure $PATH
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
-
-echo Updating brew
-brew update
 
 echo Installing Dependencies
 # build dependencies
@@ -96,6 +93,43 @@ export ac_cv_lib_soname_vulkan=""
 export ac_cv_lib_soname_MoltenVK="$(brew --prefix molten-vk)/lib/libMoltenVK.dylib"
 
 
+############ BuildTools 64bit ##############
+
+echo "Configure winetools64-${CROSS_OVER_VERSION}"
+mkdir -p ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
+pushd ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
+${WINE_CONFIGURE} \
+        --disable-option-checking \
+        --enable-win64 \
+        --disable-tests \
+        --without-alsa \
+        --without-capi \
+        --without-dbus \
+        --without-inotify \
+        --without-oss \
+        --without-pulse \
+        --without-udev \
+        --without-usb \
+        --without-v4l2 \
+        --without-gsm \
+        --with-mingw \
+        --with-png \
+        --with-sdl \
+        --without-krb5 \
+        --with-vulkan \
+        --without-x
+popd
+
+echo "Build winetools64-${CROSS_OVER_VERSION}"
+pushd ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
+make __tooldeps__ -j$(sysctl -n hw.ncpu 2>/dev/null)
+
+# cross-compiling of wine is broken due to nls not building (wine-7.6)
+# https://bugs.winehq.org/show_bug.cgi?id=52834
+if [ -d "$(pwd)/nls" ]; then make -C nls; fi
+popd
+
+
 ############ Build 64bit Version ##############
 
 echo "Configure wine64-${CROSS_OVER_VERSION}"
@@ -103,6 +137,7 @@ mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
         --disable-option-checking \
+        --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
         --enable-win64 \
         --disable-tests \
         --without-alsa \
@@ -138,6 +173,7 @@ ${WINE_CONFIGURE} \
         --disable-option-checking \
         --enable-win32on64 \
         --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
+        --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
         --disable-tests \
         --without-alsa \
         --without-capi \
