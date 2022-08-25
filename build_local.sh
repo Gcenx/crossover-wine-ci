@@ -84,41 +84,21 @@ patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
 popd
 
 
-if [[ ${CROSS_OVER_VERSION} == 20.* ]]; then
-    echo "Patch wcslen() in ntdll/wcstring.c to prevent crash if a nullptr is suppluied to the function (HACK)"
-    pushd sources/wine
-    patch -p1 < ${GITHUB_WORKSPACE}/wcstring.patch
-    popd
+export CC=clang
+export CXX=$CC++
+export CROSSCFLAGS="-g -O2"
+export CFLAGS="$CROSSCFLAGS -Wno-deprecated-declarations"
+export LDFLAGS="-Wl,-headerpad_max_install_names"
 
-    echo "Patch msvcrt to export the missing sincos function"
-    # https://github.com/wine-mirror/wine/commit/f0131276474997b9d4e593bbf8c5616b879d3bd5
-    pushd sources/wine
-    patch -p1 < ${GITHUB_WORKSPACE}/msvcrt-sincos.patch
-    popd
-fi
+export GPHOTO2_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
+export GPHOTO2_PORT_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
+export ac_cv_lib_soname_vulkan=""
+export ac_cv_lib_soname_MoltenVK="$(brew --prefix molten-vk)/lib/libMoltenVK.dylib"
 
 
 ############ Build 64bit Version ##############
 
 echo "Configure wine64-${CROSS_OVER_VERSION}"
-export CC=clang
-export CXX=clang++
-
-# see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
-export CROSSCFLAGS=$([[ ${CROSS_OVER_VERSION} -le 20.0.2 ]] && echo "-g -O2 -fcommon" || echo "-g -O2")
-
-# Xcode12 by default enables '-Werror,-Wimplicit-function-declaration' (49917738)
-# this causes wine(64) builds to fail so needs to be disabled.
-# https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes
-export CFLAGS="-g -O2 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names"
-
-export GPHOTO2_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
-export GPHOTO2_PORT_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
-export SDL2_CFLAGS="-I$(brew --prefix sdl2)/include -I$(brew --prefix sdl2)/include/SDL2"
-export ac_cv_lib_soname_vulkan=""
-export ac_cv_lib_soname_MoltenVK="$(brew --prefix molten-vk)/lib/libMoltenVK.dylib"
-
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
@@ -132,6 +112,7 @@ ${WINE_CONFIGURE} \
         --without-oss \
         --without-pulse \
         --without-udev \
+        --without-usb \
         --without-v4l2 \
         --without-gsm \
         --with-mingw \
@@ -151,22 +132,6 @@ popd
 ############ Build 32bit Version (WoW64) ##############
 
 echo "Configure wine32on64-${CROSS_OVER_VERSION}"
-export CC=clang
-export CXX=clang++
-
-# see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
-export CROSSCFLAGS=$([[ ${CROSS_OVER_VERSION} -le 20.0.2 ]] && echo "-g -O2 -fcommon" || echo "-g -O2")
-
-# Xcode12 by default enables '-Werror,-Wimplicit-function-declaration' (49917738)
-# this causes wine(64) builds to fail so needs to be disabled.
-# https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes
-export CFLAGS="-g -O2 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names"
-
-export GPHOTO2_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
-export GPHOTO2_PORT_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
-export SDL2_CFLAGS="-I$(brew --prefix sdl2)/include -I$(brew --prefix sdl2)/include/SDL2"
-
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
@@ -181,6 +146,7 @@ ${WINE_CONFIGURE} \
         --without-oss \
         --without-pulse \
         --without-udev \
+        --without-usb \
         --without-v4l2 \
         --disable-winedbg \
         --without-cms \
