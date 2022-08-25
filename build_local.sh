@@ -20,7 +20,6 @@ export CROSS_OVER_LOCAL_FILE=crossover-${CROSS_OVER_VERSION}
 
 # directories / files inside the downloaded tar file directory structure
 export WINE_CONFIGURE=$GITHUB_WORKSPACE/sources/wine/configure
-export DXVK_BUILDSCRIPT=$GITHUB_WORKSPACE/sources/dxvk/package-release.sh
 
 # build directories
 export BUILDROOT=$GITHUB_WORKSPACE/build
