@@ -7,7 +7,7 @@ echo Wine-Crossover-MacOS
 export GITHUB_WORKSPACE=$(pwd)
 
 if [ -z "$CROSS_OVER_VERSION" ]; then
-    export CROSS_OVER_VERSION=22.0.0
+    export CROSS_OVER_VERSION=22.0.1
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
@@ -51,14 +51,13 @@ brew install   bison                \
 # runtime dependencies for crossover-wine
 brew install   freetype             \
                gnutls               \
-               gphoto2              \
                gst-plugins-base     \
                molten-vk            \
                sane-backends        \
                sdl2
 
 echo "Add cx-llvm & bison to PATH"
-export PATH= "$(brew --prefix cx-llvm)/bin":"$(brew --prefix bison)/bin":${PATH}
+export PATH="$(brew --prefix cx-llvm)/bin":"$(brew --prefix bison)/bin":${PATH}
 
 
 ############ Download and Prepare Source Code ##############
@@ -87,8 +86,6 @@ export CROSSCFLAGS="-g -O2"
 export CFLAGS="$CROSSCFLAGS -Wno-deprecated-declarations"
 export LDFLAGS="-Wl,-headerpad_max_install_names"
 
-export GPHOTO2_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
-export GPHOTO2_PORT_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
 export ac_cv_lib_soname_vulkan=""
 export ac_cv_lib_soname_MoltenVK="$(brew --prefix molten-vk)/lib/libMoltenVK.dylib"
 
@@ -105,6 +102,7 @@ ${WINE_CONFIGURE} \
         --without-alsa \
         --without-capi \
         --without-dbus \
+        --without-gphoto \
         --without-inotify \
         --without-oss \
         --without-pulse \
@@ -143,6 +141,7 @@ ${WINE_CONFIGURE} \
         --without-alsa \
         --without-capi \
         --without-dbus \
+        --without-gphoto \
         --without-inotify \
         --without-oss \
         --without-pulse \
@@ -178,7 +177,9 @@ ${WINE_CONFIGURE} \
         --without-alsa \
         --without-capi \
         --without-dbus \
+        --without-gphoto \
         --without-inotify \
+        --without-openal \
         --without-oss \
         --without-pulse \
         --without-udev \
