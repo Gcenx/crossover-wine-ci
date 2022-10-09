@@ -179,7 +179,7 @@ ${WINE_CONFIGURE} \
         --without-dbus \
         --without-gphoto \
         --without-inotify \
-        --without-openal \
+        $([[ ${CROSS_OVER_VERSION} == 22.0.0 ]] && echo "--without-openal" || echo "--with-openal") \
         --without-oss \
         --without-pulse \
         --without-udev \
