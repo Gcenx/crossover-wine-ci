@@ -91,6 +91,7 @@ export WINE_CONFIGURE_OPTIONS="--disable-option-checking \
     --disable-tests \
     --without-alsa \
     --without-capi \
+    --without-cms \
     --without-dbus \
     --without-gphoto \
     --without-inotify \
