@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env arch -x86_64 bash
 
 set -e
 
