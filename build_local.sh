@@ -133,7 +133,7 @@ export WINE_CONFIGURE_OPTIONS="\
     --with-unwind \
     --without-usb \
     --without-v4l2 \
-    --without-x
+    --without-x"
 
 
 begingroup "Configure winetools64-${CROSS_OVER_VERSION}"
