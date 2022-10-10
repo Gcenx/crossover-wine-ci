@@ -100,27 +100,41 @@ export LDFLAGS="-Wl,-headerpad_max_install_names"
 export ac_cv_lib_soname_vulkan=""
 export ac_cv_lib_soname_MoltenVK="$(brew --prefix molten-vk)/lib/libMoltenVK.dylib"
 
-export WINE_CONFIGURE_OPTIONS="--disable-option-checking \
-    --disable-tests \
+export WINE_CONFIGURE_OPTIONS="\
+    --disable-option-checking \
     --without-alsa \
     --without-capi \
-    --without-cms \
+    --with-coreaudio \
+    --with-cups \
     --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
     --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --with-gstreamer \
     --without-inotify \
+    --without-krb5 \
+    --with-ldap \
+    --with-mingw \
+    --without-netapi \
+    --with-openal \
+    --with-opencl \
+    --with-opengl \
     --without-oss \
+    --with-pcap \
+    --with-pthread \
     --without-pulse \
+    --without-sane \
+    --with-sdl \
     --without-udev \
+    --with-unwind \
     --without-usb \
     --without-v4l2 \
-    --without-gsm \
-    --with-mingw \
-    --with-png \
-    --with-sdl \
-    --without-krb5 \
-    --without-x"
+    --without-x
 
-############ BuildTools 64bit ##############
 
 begingroup "Configure winetools64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
@@ -141,7 +155,6 @@ if [ -d "$(pwd)/nls" ]; then make -C nls; fi
 popd
 endgroup
 
-############ Build 64bit Version ##############
 
 begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
@@ -149,9 +162,11 @@ pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
         --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
         --enable-win64 \
-        ${WINE_CONFIGURE_OPTIONS}
+        ${WINE_CONFIGURE_OPTIONS} \
+        --with-vulkan
 popd
 endgroup
+
 
 begingroup "Build wine64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
@@ -159,8 +174,6 @@ make -j$(sysctl -n hw.ncpu 2>/dev/null)
 popd
 endgroup
 
-
-############ Build 32bit Version (WoW64) ##############
 
 begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
@@ -170,9 +183,11 @@ ${WINE_CONFIGURE} \
         --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
         --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
         ${WINE_CONFIGURE_OPTIONS} \
+        --without-gstreamer \
         --without-openal
 popd
 endgroup
+
 
 begingroup "Build wine32on64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
@@ -181,13 +196,12 @@ popd
 endgroup
 
 
-############ Install wine ##############
-
 begingroup "Install wine32on64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
+
 
 begingroup "Install wine64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
@@ -196,13 +210,12 @@ popd
 endgroup
 
 
-############ Bundle and Upload Deliverable ##############
-
 begingroup "Tar Wine"
 pushd ${INSTALLROOT}
 tar -czvf ${WINE_INSTALLATION}.tar.gz ${WINE_INSTALLATION}
 popd
 endgroup
+
 
 begingroup "Upload Wine"
 mkdir -p ${PACKAGE_UPLOAD}
