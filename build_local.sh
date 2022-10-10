@@ -154,7 +154,7 @@ ${WINE_CONFIGURE} \
         --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
         --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
         ${WINE_CONFIGURE_OPTIONS} \
-        $([[ ${CROSS_OVER_VERSION} ge 22.0.0 ]] && echo "--without-openal" || echo "--with-openal")
+        $([[ ${CROSS_OVER_VERSION} -ge 22.0.0 ]] && echo "--without-openal" || echo "--with-openal")
 popd
 
 echo "Build wine32on64-${CROSS_OVER_VERSION}"
