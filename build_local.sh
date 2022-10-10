@@ -1,8 +1,19 @@
-#!/usr/bin/env arch -x86_64 bash
+#!/bin/bash
 
-set -ex
+set -e
 
-echo Wine-Crossover-MacOS
+printtag() {
+    # GitHub Actions tag format
+    echo "::$1::${2-}"
+}
+
+begingroup() {
+    printtag "group" "$1"
+}
+
+endgroup() {
+    printtag "endgroup"
+}
 
 export GITHUB_WORKSPACE=$(pwd)
 
@@ -42,7 +53,8 @@ fi
 # Manually configure $PATH
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
-echo Installing Dependencies
+
+begingroup "Installing Dependencies"
 # build dependencies
 brew install   bison                \
                gcenx/wine/cx-llvm   \
@@ -55,26 +67,27 @@ brew install   freetype             \
                molten-vk            \
                sane-backends        \
                sdl2
-
+endroup
 
 ############ Download and Prepare Source Code ##############
 
-echo Get Source
+begingroup "Download & extract source"
 if [[ ! -f ${CROSS_OVER_LOCAL_FILE}.tar.gz ]]; then
     curl -o ${CROSS_OVER_LOCAL_FILE}.tar.gz ${CROSS_OVER_SOURCE_URL}
 fi
 
-echo Extract Source
 if [[ -d "${GITHUB_WORKSPACE}/sources" ]]; then
     rm -rf ${GITHUB_WORKSPACE}/sources
 fi
 tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
+endgroup
 
-echo "Patch Add missing distversion.h"
+begingroup "Patch Add missing distversion.h"
 # Patch provided by Josh Dubois, CrossOver product manager, CodeWeavers.
 pushd sources/wine
 patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
 popd
+endgroup
 
 
 export CC="$(brew --prefix cx-llvm)/bin/clang"
@@ -109,15 +122,16 @@ export WINE_CONFIGURE_OPTIONS="--disable-option-checking \
 
 ############ BuildTools 64bit ##############
 
-echo "Configure winetools64-${CROSS_OVER_VERSION}"
+begingroup "Configure winetools64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
         --enable-win64 \
         ${WINE_CONFIGURE_OPTIONS}
 popd
+endgroup
 
-echo "Build winetools64-${CROSS_OVER_VERSION}"
+begingroup "Build winetools64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 make __tooldeps__ -j$(sysctl -n hw.ncpu 2>/dev/null)
 
@@ -125,11 +139,11 @@ make __tooldeps__ -j$(sysctl -n hw.ncpu 2>/dev/null)
 # https://bugs.winehq.org/show_bug.cgi?id=52834
 if [ -d "$(pwd)/nls" ]; then make -C nls; fi
 popd
-
+endgroup
 
 ############ Build 64bit Version ##############
 
-echo "Configure wine64-${CROSS_OVER_VERSION}"
+begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
@@ -137,16 +151,18 @@ ${WINE_CONFIGURE} \
         --enable-win64 \
         ${WINE_CONFIGURE_OPTIONS}
 popd
+endgroup
 
-echo "Build wine64-${CROSS_OVER_VERSION}"
+begingroup "Build wine64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 make -j$(sysctl -n hw.ncpu 2>/dev/null)
 popd
+endgroup
 
 
 ############ Build 32bit Version (WoW64) ##############
 
-echo "Configure wine32on64-${CROSS_OVER_VERSION}"
+begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
@@ -156,33 +172,39 @@ ${WINE_CONFIGURE} \
         ${WINE_CONFIGURE_OPTIONS} \
         $([[ ${CROSS_OVER_VERSION} -ge 22.0.0 ]] && echo "--without-openal" || echo "--with-openal")
 popd
+endgroup
 
-echo "Build wine32on64-${CROSS_OVER_VERSION}"
+begingroup "Build wine32on64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 make -k -j$(sysctl -n hw.activecpu 2>/dev/null)
 popd
+endgroup
 
 
 ############ Install wine ##############
 
-echo "Install wine32on64-${CROSS_OVER_VERSION}"
+begingroup "Install wine32on64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
+endgroup
 
-echo "Install wine64-${CROSS_OVER_VERSION}"
+begingroup "Install wine64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
+endgroup
 
 
 ############ Bundle and Upload Deliverable ##############
 
-echo "Tar Wine"
+begingroup "Tar Wine"
 pushd ${INSTALLROOT}
 tar -czvf ${WINE_INSTALLATION}.tar.gz ${WINE_INSTALLATION}
 popd
+endgroup
 
-echo "Upload Wine"
+begingroup "Upload Wine"
 mkdir -p ${PACKAGE_UPLOAD}
 cp ${INSTALLROOT}/${WINE_INSTALLATION}.tar.gz ${PACKAGE_UPLOAD}/
+endgroup
