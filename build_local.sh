@@ -67,7 +67,7 @@ brew install   freetype             \
                molten-vk            \
                sane-backends        \
                sdl2
-endroup
+endgroup
 
 ############ Download and Prepare Source Code ##############
 
