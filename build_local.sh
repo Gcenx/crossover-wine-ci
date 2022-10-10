@@ -56,9 +56,6 @@ brew install   freetype             \
                sane-backends        \
                sdl2
 
-echo "Add cx-llvm & bison to PATH"
-export PATH="$(brew --prefix cx-llvm)/bin":"$(brew --prefix bison)/bin":${PATH}
-
 
 ############ Download and Prepare Source Code ##############
 
@@ -80,15 +77,34 @@ patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
 popd
 
 
-export CC=clang
+export CC="$(brew --prefix cx-llvm)/bin/clang"
 export CXX=$CC++
 export CROSSCFLAGS="-g -O2"
 export CFLAGS="$CROSSCFLAGS -Wno-deprecated-declarations"
+export BISON="$(brew --prefix bison)/bin/bison"
 export LDFLAGS="-Wl,-headerpad_max_install_names"
 
 export ac_cv_lib_soname_vulkan=""
 export ac_cv_lib_soname_MoltenVK="$(brew --prefix molten-vk)/lib/libMoltenVK.dylib"
 
+export WINE_CONFIGURE_OPTIONS="--disable-option-checking \
+    --disable-tests \
+    --without-alsa \
+    --without-capi \
+    --without-dbus \
+    --without-gphoto \
+    --without-inotify \
+    --without-oss \
+    --without-pulse \
+    --without-udev \
+    --without-usb \
+    --without-v4l2 \
+    --without-gsm \
+    --with-mingw \
+    --with-png \
+    --with-sdl \
+    --without-krb5 \
+    --without-x"
 
 ############ BuildTools 64bit ##############
 
@@ -96,26 +112,8 @@ echo "Configure winetools64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
         --enable-win64 \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-gphoto \
-        --without-inotify \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --without-gsm \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --with-vulkan \
-        --without-x
+        ${WINE_CONFIGURE_OPTIONS}
 popd
 
 echo "Build winetools64-${CROSS_OVER_VERSION}"
@@ -134,27 +132,9 @@ echo "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
         --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
         --enable-win64 \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-gphoto \
-        --without-inotify \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --without-gsm \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --with-vulkan \
-        --without-x
+        ${WINE_CONFIGURE_OPTIONS}
 popd
 
 echo "Build wine64-${CROSS_OVER_VERSION}"
@@ -169,37 +149,11 @@ echo "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
         --enable-win32on64 \
         --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
         --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-gphoto \
-        --without-inotify \
-        $([[ ${CROSS_OVER_VERSION} ge 22.0.0 ]] && echo "--without-openal" || echo "--with-openal") \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --disable-winedbg \
-        --without-cms \
-        --without-gstreamer \
-        --without-gsm \
-        --without-gphoto \
-        --without-sane \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --without-vkd3d \
-        --without-vulkan \
-        --disable-vulkan_1 \
-        --disable-winevulkan \
-        --without-x
+        ${WINE_CONFIGURE_OPTIONS} \
+        $([[ ${CROSS_OVER_VERSION} ge 22.0.0 ]] && echo "--without-openal" || echo "--with-openal")
 popd
 
 echo "Build wine32on64-${CROSS_OVER_VERSION}"
