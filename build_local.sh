@@ -1,13 +1,24 @@
 #!/usr/bin/env arch -x86_64 bash
 
-set -ex
+set -e
 
-echo Wine-Crossover-MacOS
+printtag() {
+    # GitHub Actions tag format
+    echo "::$1::${2-}"
+}
+
+begingroup() {
+    printtag "group" "$1"
+}
+
+endgroup() {
+    printtag "endgroup"
+}
 
 export GITHUB_WORKSPACE=$(pwd)
 
 if [ -z "$CROSS_OVER_VERSION" ]; then
-    export CROSS_OVER_VERSION=22.0.0
+    export CROSS_OVER_VERSION=22.0.1
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
@@ -42,7 +53,8 @@ fi
 # Manually configure $PATH
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
-echo Installing Dependencies
+
+begingroup "Installing Dependencies"
 # build dependencies
 brew install   bison                \
                gcenx/wine/cx-llvm   \
@@ -51,76 +63,89 @@ brew install   bison                \
 # runtime dependencies for crossover-wine
 brew install   freetype             \
                gnutls               \
-               gphoto2              \
                gst-plugins-base     \
                molten-vk            \
                sane-backends        \
                sdl2
-
-echo "Add cx-llvm & bison to PATH"
-export PATH= "$(brew --prefix cx-llvm)/bin":"$(brew --prefix bison)/bin":${PATH}
-
+endgroup
 
 ############ Download and Prepare Source Code ##############
 
-echo Get Source
+begingroup "Download & extract source"
 if [[ ! -f ${CROSS_OVER_LOCAL_FILE}.tar.gz ]]; then
     curl -o ${CROSS_OVER_LOCAL_FILE}.tar.gz ${CROSS_OVER_SOURCE_URL}
 fi
 
-echo Extract Source
 if [[ -d "${GITHUB_WORKSPACE}/sources" ]]; then
     rm -rf ${GITHUB_WORKSPACE}/sources
 fi
 tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
+endgroup
 
-echo "Patch Add missing distversion.h"
+begingroup "Patch Add missing distversion.h"
 # Patch provided by Josh Dubois, CrossOver product manager, CodeWeavers.
 pushd sources/wine
 patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
 popd
+endgroup
 
 
-export CC=clang
+export CC="$(brew --prefix cx-llvm)/bin/clang"
 export CXX=$CC++
 export CROSSCFLAGS="-g -O2"
 export CFLAGS="$CROSSCFLAGS -Wno-deprecated-declarations"
+export BISON="$(brew --prefix bison)/bin/bison"
 export LDFLAGS="-Wl,-headerpad_max_install_names"
 
-export GPHOTO2_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
-export GPHOTO2_PORT_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
 export ac_cv_lib_soname_vulkan=""
 export ac_cv_lib_soname_MoltenVK="$(brew --prefix molten-vk)/lib/libMoltenVK.dylib"
 
+export WINE_CONFIGURE_OPTIONS="\
+    --disable-option-checking \
+    --without-alsa \
+    --without-capi \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --with-gstreamer \
+    --without-inotify \
+    --without-krb5 \
+    --with-ldap \
+    --with-mingw \
+    --without-netapi \
+    --with-openal \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-pthread \
+    --without-pulse \
+    --without-sane \
+    --with-sdl \
+    --without-udev \
+    --with-unwind \
+    --without-usb \
+    --without-v4l2 \
+    --without-x"
 
-############ BuildTools 64bit ##############
 
-echo "Configure winetools64-${CROSS_OVER_VERSION}"
+begingroup "Configure winetools64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
         --enable-win64 \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-inotify \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --without-gsm \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --with-vulkan \
-        --without-x
+        ${WINE_CONFIGURE_OPTIONS}
 popd
+endgroup
 
-echo "Build winetools64-${CROSS_OVER_VERSION}"
+begingroup "Build winetools64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 make __tooldeps__ -j$(sysctl -n hw.ncpu 2>/dev/null)
 
@@ -128,105 +153,71 @@ make __tooldeps__ -j$(sysctl -n hw.ncpu 2>/dev/null)
 # https://bugs.winehq.org/show_bug.cgi?id=52834
 if [ -d "$(pwd)/nls" ]; then make -C nls; fi
 popd
+endgroup
 
 
-############ Build 64bit Version ##############
-
-echo "Configure wine64-${CROSS_OVER_VERSION}"
+begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
         --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
         --enable-win64 \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-inotify \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --without-gsm \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --with-vulkan \
-        --without-x
+        ${WINE_CONFIGURE_OPTIONS} \
+        --with-vulkan
 popd
+endgroup
 
-echo "Build wine64-${CROSS_OVER_VERSION}"
+
+begingroup "Build wine64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 make -j$(sysctl -n hw.ncpu 2>/dev/null)
 popd
+endgroup
 
 
-############ Build 32bit Version (WoW64) ##############
-
-echo "Configure wine32on64-${CROSS_OVER_VERSION}"
+begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
         --enable-win32on64 \
         --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
         --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-inotify \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --disable-winedbg \
-        --without-cms \
+        ${WINE_CONFIGURE_OPTIONS} \
         --without-gstreamer \
-        --without-gsm \
-        --without-gphoto \
-        --without-sane \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --without-vkd3d \
-        --without-vulkan \
-        --disable-vulkan_1 \
-        --disable-winevulkan \
-        --without-x
+        --without-openal
 popd
+endgroup
 
-echo "Build wine32on64-${CROSS_OVER_VERSION}"
+
+begingroup "Build wine32on64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 make -k -j$(sysctl -n hw.activecpu 2>/dev/null)
 popd
+endgroup
 
 
-############ Install wine ##############
-
-echo "Install wine32on64-${CROSS_OVER_VERSION}"
+begingroup "Install wine32on64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
+endgroup
 
-echo "Install wine64-${CROSS_OVER_VERSION}"
+
+begingroup "Install wine64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
+endgroup
 
 
-############ Bundle and Upload Deliverable ##############
-
-echo "Tar Wine"
+begingroup "Tar Wine"
 pushd ${INSTALLROOT}
 tar -czvf ${WINE_INSTALLATION}.tar.gz ${WINE_INSTALLATION}
 popd
+endgroup
 
-echo "Upload Wine"
+
+begingroup "Upload Wine"
 mkdir -p ${PACKAGE_UPLOAD}
 cp ${INSTALLROOT}/${WINE_INSTALLATION}.tar.gz ${PACKAGE_UPLOAD}/
+endgroup
