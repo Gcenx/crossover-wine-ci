@@ -7,7 +7,7 @@ echo Wine-Crossover-MacOS
 export GITHUB_WORKSPACE=$(pwd)
 
 if [ -z "$CROSS_OVER_VERSION" ]; then
-    export CROSS_OVER_VERSION=22.0.0
+    export CROSS_OVER_VERSION=22.0.1
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
@@ -42,20 +42,21 @@ fi
 # Manually configure $PATH
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
-echo Installing Dependencies
+echo Installing Build Dependencies
 # build dependencies
-brew install   bison                \
-               gcenx/wine/cx-llvm   \
-               mingw-w64
+brew install \
+    bison                \
+    gcenx/wine/cx-llvm   \
+    pkgconf \ 
+    mingw-w64
 
-# runtime dependencies for crossover-wine
-brew install   freetype             \
-               gnutls               \
-               gphoto2              \
-               gst-plugins-base     \
-               molten-vk            \
-               sane-backends        \
-               sdl2
+echo Installing Runtime Dependnecies
+brew install \
+    freetype             \
+    gnutls               \
+    molten-vk            \
+    openal-soft          \
+    sdl2
 
 echo "Add cx-llvm & bison to PATH"
 export PATH= "$(brew --prefix cx-llvm)/bin":"$(brew --prefix bison)/bin":${PATH}
@@ -99,25 +100,40 @@ echo "Configure winetools64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/winetools64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
-        --enable-win64 \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-inotify \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --without-gsm \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --with-vulkan \
-        --without-x
+    --disable-option-checking \
+    --enable-win64 \
+    --disable-tests \
+    --without-alsa \
+    --without-capi \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --without-gstreamer \
+    --without-inotify \
+    --without-krb5 \
+    --with-ldap \
+    --with-mingw \
+    --without-netapi \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-pthread \
+    --without-pulse \
+    --without-sane \
+    --with-sdl \
+    --without-udev \
+    --with-unwind \
+    --without-usb \
+    --without-v4l2 \
+    --without-x
 popd
 
 echo "Build winetools64-${CROSS_OVER_VERSION}"
@@ -136,26 +152,44 @@ echo "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
-        --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
-        --enable-win64 \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-inotify \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --without-gsm \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --with-vulkan \
-        --without-x
+    --disable-option-checking \
+    --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
+    --enable-win64 \
+    --disable-tests \
+
+configure.args \
+    --without-alsa \
+    --without-capi \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --without-gstreamer \
+    --without-inotify \
+    --without-krb5 \
+    --with-ldap \
+    --with-mingw \
+    --without-netapi \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-pthread \
+    --without-pulse \
+    --without-sane \
+    --with-sdl \
+    --without-udev \
+    --with-unwind \
+    --without-usb \
+    --without-v4l2 \
+    --with-vulkan \
+    --without-x
 popd
 
 echo "Build wine64-${CROSS_OVER_VERSION}"
@@ -170,35 +204,45 @@ echo "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
-        --enable-win32on64 \
-        --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
-        --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
-        --disable-tests \
-        --without-alsa \
-        --without-capi \
-        --without-dbus \
-        --without-inotify \
-        --without-oss \
-        --without-pulse \
-        --without-udev \
-        --without-usb \
-        --without-v4l2 \
-        --disable-winedbg \
-        --without-cms \
-        --without-gstreamer \
-        --without-gsm \
-        --without-gphoto \
-        --without-sane \
-        --with-mingw \
-        --with-png \
-        --with-sdl \
-        --without-krb5 \
-        --without-vkd3d \
-        --without-vulkan \
-        --disable-vulkan_1 \
-        --disable-winevulkan \
-        --without-x
+    --disable-option-checking \
+    --enable-win32on64 \
+    --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
+    --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
+    --disable-tests \
+    --without-alsa \
+    --without-capi \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --without-gstreamer \
+    --without-inotify \
+    --without-krb5 \
+    --with-ldap \
+    --with-mingw \
+    --without-netapi \
+    --without-openal \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-pthread \
+    --without-pulse \
+    --without-sane \
+    --with-sdl \
+    --without-udev \
+    --with-unwind \
+    --without-usb \
+    --without-v4l2 \
+    --without-vulkan \
+    --without-x \
+    --disable-loader
 popd
 
 echo "Build wine32on64-${CROSS_OVER_VERSION}"
