@@ -58,9 +58,6 @@ brew install \
     openal-soft          \
     sdl2
 
-echo "Add cx-llvm & bison to PATH"
-export PATH= "$(brew --prefix cx-llvm)/bin":"$(brew --prefix bison)/bin":${PATH}
-
 
 ############ Download and Prepare Source Code ##############
 
@@ -82,14 +79,13 @@ patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
 popd
 
 
-export CC=clang
-export CXX=$CC++
+export CC="$(brew --prefix cx-llvm)/bin/clang"
+export CXX="$(brew --prefix cx-llvm)/bin/clang++"
+export BISON="$(brew --prefix bison)/bin/bison"
 export CROSSCFLAGS="-g -O2"
 export CFLAGS="$CROSSCFLAGS -Wno-deprecated-declarations"
 export LDFLAGS="-Wl,-headerpad_max_install_names"
 
-export GPHOTO2_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
-export GPHOTO2_PORT_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
 export ac_cv_lib_soname_vulkan=""
 export ac_cv_lib_soname_MoltenVK="$(brew --prefix molten-vk)/lib/libMoltenVK.dylib"
 
@@ -156,8 +152,6 @@ ${WINE_CONFIGURE} \
     --with-wine-tools=${BUILDROOT}/winetools64-${CROSS_OVER_VERSION} \
     --enable-win64 \
     --disable-tests \
-
-configure.args \
     --without-alsa \
     --without-capi \
     --with-coreaudio \
@@ -247,7 +241,7 @@ popd
 
 echo "Build wine32on64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-make -k -j$(sysctl -n hw.activecpu 2>/dev/null)
+make -j$(sysctl -n hw.activecpu 2>/dev/null)
 popd
 
 
