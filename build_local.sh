@@ -60,19 +60,8 @@ brew install   bison                \
 # runtime dependencies for crossover-wine
 brew install   freetype             \
                gnutls               \
-               gphoto2              \
-               gst-plugins-base     \
                molten-vk            \
-               sane-backends        \
                sdl2
-
-if [[ ${CX_MAJOR} < 22 ]]; then
-    brew install \
-               faudio               \
-               libpng               \
-               little-cms2          \
-               mpg123
-fi
 endgroup
 
 
@@ -90,8 +79,6 @@ export MACOSX_DEPLOYMENT_TARGET=10.14
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
 export CROSSCFLAGS=$([[ ${CX_MAJOR} < 21 ]] && echo "-g -O2 -fcommon" || echo "-g -O2")
 
-export GPHOTO2_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
-export GPHOTO2_PORT_CFLAGS="-I$(brew --prefix libgphoto2)/include -I$(brew --prefix libgphoto2)/include/gphoto2"
 export SDL2_CFLAGS="-I$(brew --prefix sdl2)/include -I$(brew --prefix sdl2)/include/SDL2"
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
@@ -117,69 +104,13 @@ patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
 popd
 endgroup
 
-
-if [[ ${CROSS_OVER_VERSION} == 22.0.0 ]]; then
-    pushd sources/wine
-    patch -p1 < ${GITHUB_WORKSPACE}/CX22.0.0-vkd3d-1.4.patch
-    popd
-fi
-
-if [[ ${CX_MAJOR} == 20 ]]; then
-    begingroup "Patch wcslen() in ntdll/wcstring.c to prevent crash if a nullptr is supplied to the function (HACK)"
-    pushd sources/wine
-    patch -p1 < ${GITHUB_WORKSPACE}/wcstring.patch
-    popd
-    endgroup
-
-    begingroup "Patch msvcrt to export the missing sincos function"
-    # https://gitlab.winehq.org/wine/wine/-/commit/f0131276474997b9d4e593bbf8c5616b879d3bd5
-    pushd sources/wine
-    patch -p1 < ${GITHUB_WORKSPACE}/msvcrt-sincos.patch
-    popd
-    endgroup
-fi
-
-
-if [[ ${CX_MAJOR} -ge 21 ]]; then
-    if [[ ! -f "${PACKAGE_UPLOAD}/${DXVK_INSTALLATION}.tar.gz" ]]; then
-        begingroup "Applying patches to DXVK"
-        pushd sources/dxvk
-        patch -p1 < ${GITHUB_WORKSPACE}/0001-build-macOS-Fix-up-for-macOS.patch
-        patch -p1 < ${GITHUB_WORKSPACE}/0002-fix-d3d11-header-for-MinGW-9-1883.patch
-        patch -p1 < ${GITHUB_WORKSPACE}/0003-fixes-for-mingw-gcc-12.patch
-        popd
-        endgroup
-
-        begingroup "Installing dependencies for DXVK"
-        brew install  meson     \
-                      glslang
-        endgroup
-
-        begingroup "Build DXVK"
-        ${DXVK_BUILDSCRIPT} master ${INSTALLROOT}/${DXVK_INSTALLATION} --no-package
-        endgroup
-
-        begingroup "Tar DXVK"
-        pushd ${INSTALLROOT}
-        tar -czf ${DXVK_INSTALLATION}.tar.gz ${DXVK_INSTALLATION}
-        popd
-        endgroup
-
-        begingroup "Upload DXVK"
-        mkdir -p ${PACKAGE_UPLOAD}
-        cp ${INSTALLROOT}/${DXVK_INSTALLATION}.tar.gz ${PACKAGE_UPLOAD}/
-        endgroup
-    fi
-fi
-
-
 begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
         --disable-option-checking \
         --enable-win64 \
-        $([[ ${CX_MAJOR} -ge 22 ]] && echo "--enable-winedbg" || echo "--disable-winedbg") \
+        --disable-winedbg \
         --disable-tests \
         --without-alsa \
         --without-capi \
@@ -191,7 +122,7 @@ ${WINE_CONFIGURE} \
         --without-inotify \
         --without-krb5 \
         --with-mingw \
-        --with-openal \
+        --without-openal \
         --without-oss \
         --with-png \
         --without-pulse \
@@ -220,7 +151,7 @@ pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
         --disable-option-checking \
         --enable-win32on64 \
-        $([[ ${CX_MAJOR} -ge 22 ]] && echo "--enable-winedbg" || echo "--disable-winedbg") \
+        --disable-winedbg \
         --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
         --disable-tests \
         --without-alsa \
@@ -233,7 +164,7 @@ ${WINE_CONFIGURE} \
         --without-inotify \
         --without-krb5 \
         --with-mingw \
-        $([[ ${CX_MAJOR} -ge 22 ]] && echo "--without-openal" || echo "--with-openal") \
+        --without-openal \
         --without-oss \
         --with-png \
         --without-pulse \
