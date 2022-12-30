@@ -68,18 +68,14 @@ endgroup
 export CC="$(brew --prefix cx-llvm)/bin/clang"
 export CXX="${CC}++"
 export BISON="$(brew --prefix bison)/bin/bison"
-# Xcode12 by default enables '-Werror,-Wimplicit-function-declaration' (49917738)
-# this causes wine(64) builds to fail so needs to be disabled.
-# https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes
-export CFLAGS="-g -O2 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
+export CFLAGS="-g -O2 -Wno-deprecated-declarations -Wno-format"
 export LDFLAGS="-Wl,-headerpad_max_install_names"
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
 
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
-export CROSSCFLAGS=$([[ ${CX_MAJOR} < 21 ]] && echo "-g -O2 -fcommon" || echo "-g -O2")
+export CROSSCFLAGS="-g -O2"
 
-export SDL2_CFLAGS="-I$(brew --prefix sdl2)/include -I$(brew --prefix sdl2)/include/SDL2"
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
 
@@ -177,7 +173,8 @@ ${WINE_CONFIGURE} \
         --without-vulkan \
         --disable-vulkan_1 \
         --disable-winevulkan \
-        --without-x
+        --without-x \
+        --disable-loader
 popd
 endgroup
 
