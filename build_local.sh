@@ -27,17 +27,19 @@ export CX_MAJOR="${CROSS_OVER_VERSION:0:2}"
 # crossover source code to be downloaded
 export CROSS_OVER_SOURCE_URL=https://media.codeweavers.com/pub/crossover/source/crossover-sources-${CROSS_OVER_VERSION}.tar.gz
 export CROSS_OVER_LOCAL_FILE=crossover-${CROSS_OVER_VERSION}
+
 # directories / files inside the downloaded tar file directory structure
 export WINE_CONFIGURE=$GITHUB_WORKSPACE/sources/wine/configure
-export DXVK_BUILDSCRIPT=$GITHUB_WORKSPACE/sources/dxvk/package-release.sh
+
 # build directories
 export BUILDROOT=$GITHUB_WORKSPACE/build
+
 # target directory for installation
 export INSTALLROOT=$GITHUB_WORKSPACE/install
 export PACKAGE_UPLOAD=$GITHUB_WORKSPACE/upload
-# artifact names
+
+# artifact name
 export WINE_INSTALLATION=wine-cx${CROSS_OVER_VERSION}
-export DXVK_INSTALLATION=dxvk-cx${CROSS_OVER_VERSION}
 
 # Need to ensure Instel brew actually exists
 if ! command -v "/usr/local/bin/brew" &> /dev/null
@@ -65,18 +67,18 @@ brew install   freetype             \
 endgroup
 
 
+export BISON="$(brew --prefix bison)/bin/bison"
 export CC="$(brew --prefix cx-llvm)/bin/clang"
 export CXX="${CC}++"
-export BISON="$(brew --prefix bison)/bin/bison"
 export CFLAGS="-g -O2 -Wno-deprecated-declarations -Wno-format"
 export LDFLAGS="-Wl,-headerpad_max_install_names"
+
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
 
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
 export CROSSCFLAGS="-g -O2"
 
-export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
 
 
@@ -104,7 +106,6 @@ begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
         --enable-win64 \
         --disable-winedbg \
         --disable-tests \
@@ -145,7 +146,6 @@ begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-option-checking \
         --enable-win32on64 \
         --disable-winedbg \
         --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
