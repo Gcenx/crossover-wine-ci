@@ -53,15 +53,17 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
 
 begingroup "Installing Dependencies"
 # build dependencies
-brew install   bison                \
-               gcenx/wine/cx-llvm   \
-               mingw-w64
+brew install \
+    bison \
+    gcenx/wine/cx-llvm \
+    mingw-w64
 
 # runtime dependencies for crossover-wine
-brew install   freetype             \
-               gnutls               \
-               molten-vk            \
-               sdl2
+brew install \
+    freetype \
+    gnutls \
+    molten-vk \
+    sdl2
 endgroup
 
 
