@@ -103,31 +103,40 @@ begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-tests \
-        --disable-winedbg \
-        --enable-win64 \
-        --without-alsa \
-        --without-capi \
-        --with-cms \
-        --without-dbus \
-        --without-gstreamer \
-        --without-gsm \
-        --without-gphoto \
-        --without-inotify \
-        --without-krb5 \
-        --with-mingw \
-        --without-openal \
-        --without-oss \
-        --with-png \
-        --without-pulse \
-        --without-sane \
-        --with-sdl \
-        --without-udev \
-        --without-v4l2 \
-        --without-usb \
-        --without-vkd3d \
-        --with-vulkan \
-        --without-x
+    --disable-tests \
+    --disable-winedbg \
+    --enable-win64 \
+    --without-alsa \
+    --without-capi \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --without-gstreamer \
+    --without-inotify \
+    --without-krb5 \
+    --with-mingw \
+    --without-netapi \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-pthread \
+    --without-pulse \
+    --without-sane \
+    --with-sdl \
+    --without-udev \
+    --with-unwind \
+    --without-usb \
+    --without-v4l2 \
+    --with-vulkan \
+    --without-x
 popd
 endgroup
 
@@ -143,33 +152,42 @@ begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --disable-loader \
-        --disable-tests \
-        --disable-winedbg \
-        --enable-win32on64 \
-        --without-alsa \
-        --without-capi \
-        --without-cms \
-        --without-dbus \
-        --without-gstreamer \
-        --without-gsm \
-        --without-gphoto \
-        --without-inotify \
-        --without-krb5 \
-        --with-mingw \
-        --without-openal \
-        --without-oss \
-        --with-png \
-        --without-pulse \
-        --without-sane \
-        --with-sdl \
-        --without-udev \
-        --without-v4l2 \
-        --without-usb \
-        --without-vkd3d \
-        --with-vulkan \
-        --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
-        --without-x
+    --disable-loader \
+    --disable-tests \
+    --disable-winedbg \
+    --enable-win32on64 \
+    --without-alsa \
+    --without-capi \
+    --with-coreaudio \
+    --with-cups \
+    --without-dbus \
+    --without-fontconfig \
+    --with-freetype \
+    --with-gettext \
+    --without-gettextpo \
+    --without-gphoto \
+    --with-gnutls \
+    --without-gssapi \
+    --without-gstreamer \
+    --without-inotify \
+    --without-krb5 \
+    --with-mingw \
+    --without-netapi \
+    --with-opencl \
+    --with-opengl \
+    --without-oss \
+    --with-pcap \
+    --with-pthread \
+    --without-pulse \
+    --without-sane \
+    --with-sdl \
+    --without-udev \
+    --with-unwind \
+    --without-usb \
+    --without-v4l2 \
+    --with-vulkan \
+    --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
+    --without-x
 popd
 endgroup
 
