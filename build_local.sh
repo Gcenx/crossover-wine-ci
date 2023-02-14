@@ -22,8 +22,6 @@ if [ -z "$CROSS_OVER_VERSION" ]; then
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
-export CX_MAJOR="${CROSS_OVER_VERSION:0:2}"
-
 # crossover source code to be downloaded
 export CROSS_OVER_SOURCE_URL=https://media.codeweavers.com/pub/crossover/source/crossover-sources-${CROSS_OVER_VERSION}.tar.gz
 export CROSS_OVER_LOCAL_FILE=crossover-${CROSS_OVER_VERSION}
@@ -70,14 +68,12 @@ endgroup
 export BISON="$(brew --prefix bison)/bin/bison"
 export CC="$(brew --prefix cx-llvm)/bin/clang"
 export CXX="${CC}++"
-export CFLAGS="-g -O2 -Wno-deprecated-declarations -Wno-format"
+export CROSSCFLAGS="-g -O2"
+export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations -Wno-format"
 export LDFLAGS="-Wl,-headerpad_max_install_names"
 
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
-
-# see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
-export CROSSCFLAGS="-g -O2"
 
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
@@ -107,9 +103,9 @@ begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --enable-win64 \
-        --disable-winedbg \
         --disable-tests \
+        --disable-winedbg \
+        --enable-win64 \
         --without-alsa \
         --without-capi \
         --with-cms \
@@ -147,10 +143,10 @@ begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-        --enable-win32on64 \
-        --disable-winedbg \
-        --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
+        --disable-loader \
         --disable-tests \
+        --disable-winedbg \
+        --enable-win32on64 \
         --without-alsa \
         --without-capi \
         --without-cms \
@@ -172,8 +168,8 @@ ${WINE_CONFIGURE} \
         --without-usb \
         --without-vkd3d \
         --with-vulkan \
-        --without-x \
-        --disable-loader
+        --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
+        --without-x
 popd
 endgroup
 
