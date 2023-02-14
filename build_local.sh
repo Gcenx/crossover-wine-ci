@@ -18,7 +18,7 @@ endgroup() {
 export GITHUB_WORKSPACE=$(pwd)
 
 if [ -z "$CROSS_OVER_VERSION" ]; then
-    export CROSS_OVER_VERSION=22.0.1
+    export CROSS_OVER_VERSION=22.1.0
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
@@ -170,9 +170,7 @@ ${WINE_CONFIGURE} \
         --without-v4l2 \
         --without-usb \
         --without-vkd3d \
-        --without-vulkan \
-        --disable-vulkan_1 \
-        --disable-winevulkan \
+        --with-vulkan \
         --without-x \
         --disable-loader
 popd
