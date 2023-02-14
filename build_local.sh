@@ -79,6 +79,7 @@ export MACOSX_DEPLOYMENT_TARGET=10.14
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
 export CROSSCFLAGS="-g -O2"
 
+export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
 
 
