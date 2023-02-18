@@ -130,6 +130,7 @@ ${WINE_CONFIGURE} \
     --without-krb5 \
     --with-mingw \
     --without-netapi \
+    --without-openal \
     --with-opencl \
     --with-opengl \
     --without-oss \
@@ -180,6 +181,7 @@ ${WINE_CONFIGURE} \
     --without-krb5 \
     --with-mingw \
     --without-netapi \
+    --without-openal \
     --with-opencl \
     --with-opengl \
     --without-oss \
