@@ -78,8 +78,8 @@ export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,/opt/local/lib"
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
 
-export PKG_CONFIG_DIR=""
-export PKG_CONFIG_LIBDIR="$(brew --prefix)/lib/pkgconfig:$(brew --prefix)/share/pkgconfig"
+#export PKG_CONFIG_DIR=""
+#export PKG_CONFIG_LIBDIR="$(brew --prefix)/lib/pkgconfig:$(brew --prefix)/share/pkgconfig"
 
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
