@@ -85,13 +85,13 @@ export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
 
 
-begingroup "Downloading source"
+begingroup "Downloading $CROSS_OVER_LOCAL_FILE"
 if [[ ! -f ${CROSS_OVER_LOCAL_FILE}.tar.gz ]]; then
     curl -o ${CROSS_OVER_LOCAL_FILE}.tar.gz ${CROSS_OVER_SOURCE_URL}
 fi
 endgroup
 
-begingroup "Extracting source"
+begingroup "Extracting $CROSS_OVER_LOCAL_FILE"
 if [[ -d "${GITHUB_WORKSPACE}/sources" ]]; then
     rm -rf ${GITHUB_WORKSPACE}/sources
 fi
