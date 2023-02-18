@@ -71,8 +71,8 @@ export BISON="$(brew --prefix bison)/bin/bison"
 export CC="$(brew --prefix cx-llvm)/bin/clang"
 export CXX="${CC}++"
 export CROSSCFLAGS="-g -O2"
-export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names"
+export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations"
+export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,/opt/local/lib"
 
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
@@ -81,12 +81,13 @@ export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
 
 
-begingroup "Download & extracting source"
+begingroup "Downloading source"
 if [[ ! -f ${CROSS_OVER_LOCAL_FILE}.tar.gz ]]; then
     curl -o ${CROSS_OVER_LOCAL_FILE}.tar.gz ${CROSS_OVER_SOURCE_URL}
 fi
+endgroup
 
-
+begingroup "Extracting source"
 if [[ -d "${GITHUB_WORKSPACE}/sources" ]]; then
     rm -rf ${GITHUB_WORKSPACE}/sources
 fi
@@ -94,7 +95,7 @@ tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
 endgroup
 
 
-begingroup "Patch Add missing distversion.h"
+begingroup "Applying patch distversion.patch"
 # Patch provided by Josh Dubois, CrossOver product manager, CodeWeavers.
 pushd sources/wine
 patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
