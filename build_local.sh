@@ -196,7 +196,7 @@ endgroup
 
 begingroup "Build wine32on64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-make -k -j$(sysctl -n hw.activecpu 2>/dev/null)
+make -j$(sysctl -n hw.activecpu 2>/dev/null)
 popd
 endgroup
 
