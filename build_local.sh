@@ -39,47 +39,47 @@ export PACKAGE_UPLOAD=$GITHUB_WORKSPACE/upload
 # artifact name
 export WINE_INSTALLATION=wine-cx${CROSS_OVER_VERSION}
 
-# Need to ensure Instel brew actually exists
-if ! command -v "/usr/local/bin/brew" &> /dev/null
+# Need to ensure port actually exists
+if ! command -v "/opt/local/bin/port" &> /dev/null
 then
-    echo "</usr/local/bin/brew> could not be found"
-    echo "An Intel brew installation is required"
+    echo "</opt/local/bin/port> could not be found"
+    echo "A macports installation is required"
     exit
 fi
 
 # Manually configure $PATH
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+export PATH="/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
 
 begingroup "Installing Dependencies"
 # build dependencies
-brew install \
+sudo port install \
     bison \
-    gcenx/wine/cx-llvm \
+    cx-llvm \
+    gettext \
     mingw-w64 \
     pkgconfig
 
 # runtime dependencies for crossover-wine
-brew install \
+sudo port install \ 
     freetype \
+    gettext-runtime \
     gnutls \
-    molten-vk \
-    sdl2
+    moltenvk \
+    libpcap \
+    libsdl2
 endgroup
 
-
-export BISON="$(brew --prefix bison)/bin/bison"
-export CC="$(brew --prefix cx-llvm)/bin/clang"
+export CC="/opt/local/libexec/cx-llvm/bin/clang"
 export CXX="${CC}++"
+export CPATH=/opt/local/include
+export LIBRARY_PATH=/opt/local/lib
 export CROSSCFLAGS="-g -O2"
 export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations"
 export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,/opt/local/lib"
 
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
-
-#export PKG_CONFIG_DIR=""
-#export PKG_CONFIG_LIBDIR="$(brew --prefix)/lib/pkgconfig:$(brew --prefix)/share/pkgconfig"
 
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
