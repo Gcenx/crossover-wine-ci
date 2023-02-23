@@ -80,8 +80,6 @@ endgroup
 begingroup "Configuring MacPorts"
 # Set PATH for portindex
 source /opt/local/share/macports/setupenv.bash
-# Set ports tree to $PWD/ports
-sudo sed -i "" "s|rsync://rsync.macports.org/macports/release/tarballs/ports.tar|file://${PWD}/ports|; /^file:/s/default/nosync,default/" /opt/local/etc/macports/sources.conf
 # CI is not interactive
 echo "ui_interactive no" | sudo tee -a /opt/local/etc/macports/macports.conf >/dev/null
 # Only download from the CDN, not the mirrors
@@ -96,17 +94,7 @@ endgroup
 
 
 begingroup "Updating PortIndex"
-## Run portindex on recent commits if PR is newer
-git -C ports/ remote add macports https://github.com/macports/macports-ports.git
-git -C ports/ fetch macports master
-git -C ports/ checkout -qf macports/master~10
-git -C ports/ checkout -qf -
-git -C ports/ checkout -qf "$(git -C ports/ merge-base macports/master HEAD)"
-## Ignore portindex errors on common ancestor
-wait $curl_portindex_pid
-(cd ports/ && portindex)
-git -C ports/ checkout -qf -
-(cd ports/ && portindex -e)
+sudo port sync
 endgroup
 
 
