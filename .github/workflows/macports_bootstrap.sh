@@ -78,9 +78,9 @@ sudo tar -xpf "${MACPORTS_FILENAME}" -C /
 rm -f "${MACPORTS_FILENAME}"
 endgroup
 
-beginggroup "Install cx-llvm
+begingroup "Install cx-llvm"
 sudo tar -czf "cx-llvm-22.0.1.big_sur.bottle.tar.gz" -C /
-endgroup"
+endgroup
 
 begingroup "Configuring MacPorts"
 # Set PATH for portindex
