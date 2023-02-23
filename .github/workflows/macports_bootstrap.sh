@@ -80,7 +80,7 @@ rm -f "${MACPORTS_FILENAME}"
 endgroup
 
 begingroup "Install cx-llvm"
-sudo tar -czf "cx-llvm-22.0.1.big_sur.bottle.tar.gz" -C /
+sudo tar -xpf "cx-llvm-22.0.1.big_sur.bottle.tar.gz" -C /
 endgroup
 
 begingroup "Configuring MacPorts"
