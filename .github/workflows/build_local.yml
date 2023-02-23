@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Bootstrap MacPorts
-        run: ./.github/workflows/macports_bootstrap.sh
+        run: . .github/workflows/macports_bootstrap.sh
 
       - name: Run build_local.sh
         run: ./build_local.sh
