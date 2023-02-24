@@ -60,7 +60,7 @@ sudo port install freetype gettext-runtime gnutls moltenvk libpcap libsdl2
 endgroup
 
 
-export CC="/usr/local/cx-llvm/22.0.1/bin/clang"
+export CC="/opt/cx-llvm/bin/clang"
 export CXX="${CC}++"
 export CPATH=/opt/local/include
 export LIBRARY_PATH=/opt/local/lib
