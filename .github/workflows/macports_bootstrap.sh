@@ -99,13 +99,11 @@ echo "archive_site_local https://packages-private.macports.org/:tbz2" | sudo tee
 #echo "preferred_hosts packages.macports.org" | sudo tee -a /opt/local/etc/macports/macports.conf >/dev/null
 endgroup
 
-
-begingroup "Updating PortIndex"
-sudo port sync
-endgroup
-
-
 begingroup "Running postflight"
 # Create macports user
 sudo /opt/local/libexec/macports/postflight/postflight
+endgroup
+
+begingroup "Updating PortIndex"
+sudo port sync
 endgroup
