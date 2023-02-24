@@ -102,6 +102,7 @@ begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
+    CROSSCC="ccache x86_64-w64-mingw32-gcc" \
     --disable-tests \
     --disable-winedbg \
     --enable-win64 \
@@ -152,6 +153,7 @@ begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
+    CROSSCC="ccache i686-w64-mingw32-gcc" \
     --disable-loader \
     --disable-tests \
     --disable-winedbg \
