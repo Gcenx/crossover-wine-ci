@@ -37,8 +37,9 @@ echo "Fetching PortIndex..."
 /usr/bin/curl -fsSLo ports/PortIndex "https://ftp.fau.de/macports/release/ports/PortIndex_darwin_${OS_MAJOR}_${OS_ARCH}/PortIndex" &
 curl_portindex_pid=$!
 # Grab a prebuilt copy of cx-llvm
+echo "Fetching CX-LLVM"
 /usr/bin/curl -fsSLO "https://github.com/Gcenx/homebrew-wine/releases/download/cx-llvm-22.0.1/cx-llvm-22.0.1.big_sur.bottle.tar.gz" &
-curl_mpbase_pid=$!
+curl_llvm_pid=$!
 endgroup
 
 
@@ -80,6 +81,8 @@ rm -f "${MACPORTS_FILENAME}"
 endgroup
 
 begingroup "Install cx-llvm"
+wait $curl_llvm_pid
+echo "Extracting CX-LLVM"
 sudo tar -xpf "cx-llvm-22.0.1.big_sur.bottle.tar.gz" -C /usr/local
 endgroup
 
