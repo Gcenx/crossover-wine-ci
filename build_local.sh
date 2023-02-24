@@ -55,7 +55,6 @@ begingroup "Installing Dependencies"
 # build dependencies
 sudo port install \
     bison \
-    cx-llvm \
     gettext \
     mingw-w64 \
     pkgconfig
@@ -70,7 +69,7 @@ sudo port install \
     libsdl2
 endgroup
 
-export CC="/opt/local/libexec/cx-llvm/bin/clang"
+export CC="/usr/local/cx-llvm/22.0.1/bin/clang"
 export CXX="${CC}++"
 export CPATH=/opt/local/include
 export LIBRARY_PATH=/opt/local/lib
