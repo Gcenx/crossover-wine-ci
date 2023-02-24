@@ -81,7 +81,7 @@ begingroup "Install cx-llvm"
 wait $curl_llvm_pid
 echo "Extracting..."
 sudo mkdir /opt/cx-llvm
-sudo tar -xpf --strip-components=2 "cx-llvm-22.0.1.big_sur.bottle.tar.gz" -C /opt/cx-llvm
+sudo tar -xpf "cx-llvm-22.0.1.big_sur.bottle.tar.gz" --strip-components=2 -C /opt/cx-llvm
 endgroup
 
 begingroup "Configuring MacPorts"
