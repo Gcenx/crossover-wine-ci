@@ -51,23 +51,14 @@ fi
 export PATH="/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
 
-begingroup "Installing Dependencies"
-# build dependencies
-sudo port install \
-    bison \
-    gettext \
-    mingw-w64 \
-    pkgconfig
-
-# runtime dependencies for crossover-wine
-sudo port install \ 
-    freetype \
-    gettext-runtime \
-    gnutls \
-    moltenvk \
-    libpcap \
-    libsdl2
+begingroup "Installing build dependencies"
+sudo port install bison gettext mingw-w64 pkgconfig
 endgroup
+
+begingroup "Installing runtime dependencies"
+sudo port install freetype gettext-runtime gnutls moltenvk libpcap libsdl2
+endgroup
+
 
 export CC="/usr/local/cx-llvm/22.0.1/bin/clang"
 export CXX="${CC}++"
