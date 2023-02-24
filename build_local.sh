@@ -47,12 +47,14 @@ then
     exit
 fi
 
+# Add cx-llvm stage here
+
 # Manually configure $PATH
 export PATH="/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
 
 begingroup "Installing build dependencies"
-sudo port install bison gettext mingw-w64 pkgconfig
+sudo port install bison ccache gettext mingw-w64 pkgconfig
 endgroup
 
 begingroup "Installing runtime dependencies"
@@ -60,7 +62,7 @@ sudo port install freetype gettext-runtime gnutls moltenvk libpcap libsdl2
 endgroup
 
 
-export CC="/opt/cx-llvm/bin/clang"
+export CC="ccache /opt/cx-llvm/bin/clang"
 export CXX="${CC}++"
 export CPATH=/opt/local/include
 export LIBRARY_PATH=/opt/local/lib
