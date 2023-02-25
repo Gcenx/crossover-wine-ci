@@ -105,11 +105,9 @@ sudo /opt/local/libexec/macports/postflight/postflight
 endgroup
 
 begingroup "Adding macports-wine overlay"
-pushd /opt
-sudo git clone https://github.com/Gcenx/macports-wine
-popd
+sudo git clone https://github.com/Gcenx/macports-wine /opt
 sudo rm /opt/local/etc/macports/sources.conf
-sudo cp ../../sources.conf /opt/local/etc/macports/sources.conf
+sudo cp $GITHUB_WORKSPACE/sources.conf /opt/local/etc/macports/sources.conf
 endgroup
 
 begingroup "Updating PortIndex"
