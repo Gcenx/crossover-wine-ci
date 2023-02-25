@@ -105,7 +105,8 @@ sudo /opt/local/libexec/macports/postflight/postflight
 endgroup
 
 begingroup "Adding macports-wine overlay"
-sudo git clone https://github.com/Gcenx/macports-wine /opt
+sudo mkdir /opt/macports-wine
+sudo git clone https://github.com/Gcenx/macports-wine /opt/macports-wine
 sudo rm /opt/local/etc/macports/sources.conf
 sudo cp $GITHUB_WORKSPACE/sources.conf /opt/local/etc/macports/sources.conf
 endgroup
