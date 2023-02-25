@@ -47,14 +47,12 @@ then
     exit
 fi
 
-
 # Need CodeWeavers custom llvm toolchain for -mwine32 target
-if ! command -v "/opt/opt/bin/clang" &> /dev/null
-then
+if ! command -v "/opt/opt/bin/clang" &> /dev/null; then
     begingroup "Fetching cx-llvm..."
-    /usr/bin/curl -fsSLO "https://github.com/Gcenx/homebrew-wine/releases/download/cx-llvm-22.0.1/cx-llvm-22.0.1.big_sur.bottle.tar.gz" &
-    curl_llvm_pid=$!
+    /usr/bin/curl -fsSLO "https://github.com/Gcenx/homebrew-wine/releases/download/cx-llvm-22.0.1/cx-llvm-22.0.1.big_sur.bottle.tar.gz" & curl_llvm_pid=$!
     endgroup
+
 
     begingroup "Installing cx-llvm"
     wait $curl_llvm_pid
@@ -67,11 +65,6 @@ fi
 
 # Manually configure $PATH
 export PATH="/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
-
-
-#begingroup "Try to install cx-llvm"
-#sudo port install cx-llvm
-#endgroup
 
 
 begingroup "Installing dependencies build"
@@ -90,7 +83,7 @@ export CPATH=/opt/local/include
 export LIBRARY_PATH=/opt/local/lib
 export CROSSCFLAGS="-g -O2"
 export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,/opt/local/lib"
+export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,/opt/local/lib -Wl,-rpath,/opt/xquartz/lib"
 
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
@@ -99,11 +92,11 @@ export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
 
 
-begingroup "Downloading $CROSS_OVER_LOCAL_FILE"
 if [[ ! -f ${CROSS_OVER_LOCAL_FILE}.tar.gz ]]; then
+    begingroup "Downloading $CROSS_OVER_LOCAL_FILE"
     curl -o ${CROSS_OVER_LOCAL_FILE}.tar.gz ${CROSS_OVER_SOURCE_URL}
+    endgroup
 fi
-endgroup
 
 
 begingroup "Extracting $CROSS_OVER_LOCAL_FILE"
