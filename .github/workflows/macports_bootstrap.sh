@@ -109,7 +109,7 @@ pushd /opt
 sudo git clone https://github.com/Gcenx/macports-wine
 popd
 sudo rm /opt/local/etc/macports/sources.conf
-sudo cp ../sources.conf /opt/local/etc/macports/sources.conf
+sudo cp ../../sources.conf /opt/local/etc/macports/sources.conf
 endgroup
 
 begingroup "Updating PortIndex"
