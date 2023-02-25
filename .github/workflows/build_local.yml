@@ -23,7 +23,7 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Bootstrap MacPorts
         run: . .github/workflows/macports_bootstrap.sh
@@ -32,7 +32,7 @@ jobs:
         run: ./build_local.sh
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: artifacts-build_local-wine-cx${{ matrix.CROSS_OVER_VERSION }}
           path: ${{ env.PACKAGE_UPLOAD }}
