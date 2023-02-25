@@ -104,13 +104,13 @@ begingroup "Running postflight"
 sudo /opt/local/libexec/macports/postflight/postflight
 endgroup
 
-begingroup "Adding macports-wine overlay"
-sudo mkdir /opt/macports-wine
-rm $HOME/.gitconfig
-git clone https://github.com/Gcenx/macports-wine.git
-sudo rm /opt/local/etc/macports/sources.conf
-sudo cp $GITHUB_WORKSPACE/sources.conf /opt/local/etc/macports/sources.conf
-endgroup
+#begingroup "Adding macports-wine overlay"
+#sudo mkdir /opt/macports-wine
+#rm $HOME/.gitconfig
+#git clone https://github.com/Gcenx/macports-wine.git
+#sudo rm /opt/local/etc/macports/sources.conf
+#sudo cp $GITHUB_WORKSPACE/sources.conf /opt/local/etc/macports/sources.conf
+#endgroup
 
 begingroup "Updating PortIndex"
 sudo port sync -v
