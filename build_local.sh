@@ -57,11 +57,13 @@ export PATH="/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
 #sudo port install cx-llvm
 #endgroup
 
-begingroup "Installing build dependencies"
+
+begingroup "Installing dependencies build"
 sudo port install bison ccache gettext mingw-w64 pkgconfig
 endgroup
 
-begingroup "Installing runtime dependencies"
+
+begingroup "Installing dependencies libraries"
 sudo port install freetype gettext-runtime gnutls moltenvk libpcap libsdl2
 endgroup
 
@@ -71,7 +73,7 @@ export CXX="${CC}++"
 export CPATH=/opt/local/include
 export LIBRARY_PATH=/opt/local/lib
 export CROSSCFLAGS="-g -O2"
-export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations"
+export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations -Wno-format"
 export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,/opt/local/lib"
 
 # avoid weird linker errors with Xcode 10 and later
@@ -87,6 +89,7 @@ if [[ ! -f ${CROSS_OVER_LOCAL_FILE}.tar.gz ]]; then
 fi
 endgroup
 
+
 begingroup "Extracting $CROSS_OVER_LOCAL_FILE"
 if [[ -d "${GITHUB_WORKSPACE}/sources" ]]; then
     rm -rf ${GITHUB_WORKSPACE}/sources
@@ -101,6 +104,7 @@ pushd sources/wine
 patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
 popd
 endgroup
+
 
 begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
