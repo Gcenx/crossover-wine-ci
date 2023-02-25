@@ -106,7 +106,7 @@ endgroup
 
 begingroup "Adding macports-wine overlay"
 sudo mkdir /opt/macports-wine
-sudo git clone https://github.com/Gcenx/macports-wine /opt/macports-wine
+sudo git -C /opt/macports-wine clone https://github.com/Gcenx/macports-wine.git
 sudo rm /opt/local/etc/macports/sources.conf
 sudo cp $GITHUB_WORKSPACE/sources.conf /opt/local/etc/macports/sources.conf
 endgroup
