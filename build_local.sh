@@ -47,7 +47,22 @@ then
     exit
 fi
 
-# Add cx-llvm stage here
+
+# Need CodeWeavers custom llvm toolchain for -mwine32 target
+if ! command -v "/opt/opt/bin/clang" &> /dev/null
+    begingroup "Fetching cx-llvm..."
+    /usr/bin/curl -fsSLO "https://github.com/Gcenx/homebrew-wine/releases/download/cx-llvm-22.0.1/cx-llvm-22.0.1.big_sur.bottle.tar.gz" &
+    curl_llvm_pid=$!
+    endgroup
+
+    begingroup "Installing cx-llvm"
+    wait $curl_llvm_pid
+    echo "Extracting..."
+    sudo mkdir /opt/cx-llvm
+    sudo tar -xpf "cx-llvm-22.0.1.big_sur.bottle.tar.gz" --strip-components=2 -C /opt/cx-llvm
+    endgroup
+fi
+
 
 # Manually configure $PATH
 export PATH="/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
