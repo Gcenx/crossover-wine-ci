@@ -53,6 +53,10 @@ fi
 export PATH="/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
 
+begingroup "Try to install cx-llvm"
+sudo port install cx-llvm
+endgroup
+
 begingroup "Installing build dependencies"
 sudo port install bison ccache gettext mingw-w64 pkgconfig
 endgroup
