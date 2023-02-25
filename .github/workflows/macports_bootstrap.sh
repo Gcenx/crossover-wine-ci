@@ -106,11 +106,12 @@ endgroup
 
 begingroup "Adding macports-wine overlay"
 #sudo mkdir /opt/macports-wine
-sudo git -C /opt clone https://github.com/Gcenx/macports-wine.git
+git clone https://github.com/Gcenx/macports-wine.git
+sudo echo $(pwd)
 sudo rm /opt/local/etc/macports/sources.conf
 sudo cp $GITHUB_WORKSPACE/sources.conf /opt/local/etc/macports/sources.conf
 endgroup
 
 begingroup "Updating PortIndex"
-sudo port sync
+sudo port sync -v
 endgroup
