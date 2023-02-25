@@ -83,7 +83,7 @@ export CPATH=/opt/local/include
 export LIBRARY_PATH=/opt/local/lib
 export CROSSCFLAGS="-g -O2"
 export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,/opt/local/lib -Wl,-rpath,/opt/xquartz/lib"
+export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,/opt/local/lib -Wl,-rpath,/opt/X11/lib"
 
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
