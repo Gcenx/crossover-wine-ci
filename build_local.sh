@@ -50,6 +50,7 @@ fi
 
 # Need CodeWeavers custom llvm toolchain for -mwine32 target
 if ! command -v "/opt/opt/bin/clang" &> /dev/null
+then
     begingroup "Fetching cx-llvm..."
     /usr/bin/curl -fsSLO "https://github.com/Gcenx/homebrew-wine/releases/download/cx-llvm-22.0.1/cx-llvm-22.0.1.big_sur.bottle.tar.gz" &
     curl_llvm_pid=$!
