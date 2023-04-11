@@ -75,7 +75,7 @@ jobs:
         run: |
           tar xf ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz
 
-      - name: Patch adding missing distversion.h
+      - name: Applying distversion.patch
         run: |
           pushd sources/wine
           patch -p1 < ${{ github.workspace }}/distversion.patch
