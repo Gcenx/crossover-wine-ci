@@ -75,9 +75,11 @@ jobs:
         run: |
           tar xf ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz
 
-      - name: Add distversion.h
+      - name: Patch adding missing distversion.h
         run: |
-          cp distversion.h sources/wine/include/distversion.h
+          pushd sources/wine
+          patch -p1 < ${{ github.workspace }}/distversion.patch
+          popd
 
       - name: Configure wine64
         run: |
