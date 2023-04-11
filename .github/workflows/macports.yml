@@ -146,6 +146,7 @@ jobs:
             --enable-win32on64 \
             --without-alsa \
             --without-capi \
+            --without-cms \
             --with-coreaudio \
             --with-cups \
             --without-dbus \
@@ -155,6 +156,7 @@ jobs:
             --without-gettextpo \
             --without-gphoto \
             --with-gnutls \
+            --without-gsm \
             --without-gssapi \
             --without-gstreamer \
             --without-inotify \
@@ -174,7 +176,10 @@ jobs:
             --with-unwind \
             --without-usb \
             --without-v4l2 \
-            --with-vulkan \
+            --without-vkd3d \
+            --without-vulkan \
+            --disable-vulkan_1 \
+            --disable-winevulkan \
             --with-wine64=${{ env.BUILDROOT }}/wine64 \
             --without-x
           popd
