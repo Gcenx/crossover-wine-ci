@@ -47,28 +47,12 @@ then
     exit
 fi
 
-# Need CodeWeavers custom llvm toolchain for -mwine32 target
-if ! command -v "/opt/opt/bin/clang" &> /dev/null; then
-    begingroup "Fetching cx-llvm..."
-    /usr/bin/curl -fsSLO "https://github.com/Gcenx/homebrew-wine/releases/download/cx-llvm-22.0.1/cx-llvm-22.0.1.big_sur.bottle.tar.gz" & curl_llvm_pid=$!
-    endgroup
-
-
-    begingroup "Installing cx-llvm"
-    wait $curl_llvm_pid
-    echo "Extracting..."
-    sudo mkdir /opt/cx-llvm
-    sudo tar -xpf "cx-llvm-22.0.1.big_sur.bottle.tar.gz" --strip-components=2 -C /opt/cx-llvm
-    endgroup
-fi
-
-
 # Manually configure $PATH
-export PATH="/opt/opt/bin:/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+export PATH="/opt/local/libexec/llvm-cx/bin:/opt/opt/bin:/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
 
 begingroup "Installing dependencies build"
-sudo port install bison ccache gettext mingw-w64 pkgconfig
+sudo port install bison ccache gettext llvm-cx mingw-w64 pkgconfig
 endgroup
 
 

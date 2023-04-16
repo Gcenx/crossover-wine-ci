@@ -37,16 +37,10 @@ jobs:
       - name: Bootstrap MacPorts
         run: . .github/workflows/bootstrap.sh
 
-      - name: Installing cx-llvm
-        run: |
-          curl -LJO https://github.com/Gcenx/homebrew-wine/releases/download/cx-llvm-22.0.1/cx-llvm-22.0.1.big_sur.bottle.tar.gz
-          sudo mkdir /opt/cx-llvm
-          sudo tar -xpf "cx-llvm-22.0.1.big_sur.bottle.tar.gz" --strip-components=2 -C /opt/cx-llvm
-
-      - name: Adding cx-llvm & MacPorts into $PATH
+      - name: Adding llvm-cx & MacPorts into $PATH
         run: |
           set -eu
-          echo "/opt/cx-llvm/bin" >> $GITHUB_PATH
+          echo "/opt/local/libexec/llvm-cx/bin" >> $GITHUB_PATH
           echo "/opt/local/bin" >> $GITHUB_PATH
           echo "/opt/local/sbin" >> $GITHUB_PATH
 
@@ -55,6 +49,7 @@ jobs:
           sudo port install \
             bison \
             gettext \
+            llvm-cx \
             mingw-w64 \
             pkgconfig
 
