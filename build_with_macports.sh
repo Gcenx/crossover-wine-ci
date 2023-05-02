@@ -68,7 +68,7 @@ export LIBRARY_PATH=/opt/local/lib
 export MACOSX_DEPLOYMENT_TARGET=10.14
 export CROSSCFLAGS="-g -O2"
 export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/usr/local/lib -Wl,-rpath,/opt/local/lib -Wl,-rpath,/opt/X11/lib"
+export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib -Wl,-rpath,/usr/local/lib -Wl,-rpath,/opt/X11/lib"
 
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
@@ -89,8 +89,10 @@ tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
 endgroup
 
 
-+begingroup "Add distversion.h"
-cp ${GITHUB_WORKSPACE}/distversion.h ${GITHUB_WORKSPACE}/sources/wine/include/distversion.h
+begingroup "Patch Add missing distversion.h"
+pushd sources/wine
+patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
+popd
 endgroup
 
 
