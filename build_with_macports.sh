@@ -89,8 +89,11 @@ tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
 endgroup
 
 
-+begingroup "Add distversion.h"
-cp ${GITHUB_WORKSPACE}/distversion.h ${GITHUB_WORKSPACE}/sources/wine/include/distversion.h
+begingroup "Add distversion.h"
+cat > "${GITHUB_WORKSPACE}/sources/wine/include/distversion.h" <<_EOF_
+#define WINDEBUG_WHAT_HAPPENED_MESSAGE "This can be caused by a problem in the program or a deficiency in Wine."
+#define WINDEBUG_USER_SUGGESTION_MESSAGE "Check the log for any missing native dependencies and install using winetricks"
+_EOF_
 endgroup
 
 
