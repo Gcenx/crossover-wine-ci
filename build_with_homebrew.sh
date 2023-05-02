@@ -91,8 +91,10 @@ tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
 endgroup
 
 
-begingroup "Add distversion.h"
-cp ${GITHUB_WORKSPACE}/distversion.h ${GITHUB_WORKSPACE}/sources/wine/include/distversion.h
+begingroup "Patch Add missing distversion.h"
+pushd sources/wine
+patch -p1 < ${GITHUB_WORKSPACE}/distversion.patch
+popd
 endgroup
 
 
