@@ -48,7 +48,6 @@ jobs:
           sudo port install \
             bison \
             gettext \
-            llvm-cx \
             mingw-w64 \
             pkgconfig
 
