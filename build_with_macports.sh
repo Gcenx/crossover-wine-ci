@@ -18,7 +18,7 @@ endgroup() {
 export GITHUB_WORKSPACE=$(pwd)
 
 if [ -z "$CROSS_OVER_VERSION" ]; then
-    export CROSS_OVER_VERSION=22.1.1
+    export CROSS_OVER_VERSION=23.0.1
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
@@ -48,11 +48,11 @@ then
 fi
 
 # Manually configure $PATH
-export PATH="/opt/local/libexec/llvm-cx/bin:/opt/opt/bin:/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+export PATH="/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
 
 begingroup "Installing dependencies build"
-sudo port install bison ccache gettext llvm-cx mingw-w64 pkgconfig
+sudo port install bison ccache gettext mingw-w64 pkgconfig
 endgroup
 
 
@@ -65,12 +65,11 @@ export CC="ccache clang"
 export CXX="${CC}++"
 export CPATH=/opt/local/include
 export LIBRARY_PATH=/opt/local/lib
-export MACOSX_DEPLOYMENT_TARGET=10.14
+export MACOSX_DEPLOYMENT_TARGET=10.15
 export CROSSCFLAGS="-g -O2"
 export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/usr/local/lib -Wl,-rpath,/opt/local/lib -Wl,-rpath,/opt/X11/lib"
+export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib"
 
-export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
 export ac_cv_lib_soname_vulkan=""
 
 
@@ -98,10 +97,8 @@ begingroup "Configure wine64-${CROSS_OVER_VERSION}"
 mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
-    CROSSCC="ccache x86_64-w64-mingw32-gcc" \
     --prefix= \
     --disable-tests \
-    --disable-winedbg \
     --enable-win64 \
     --without-alsa \
     --without-capi \
@@ -120,7 +117,6 @@ ${WINE_CONFIGURE} \
     --without-krb5 \
     --with-mingw \
     --without-netapi \
-    --without-openal \
     --with-opencl \
     --with-opengl \
     --without-oss \
@@ -142,67 +138,6 @@ endgroup
 begingroup "Build wine64-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
 make -j$(sysctl -n hw.ncpu 2>/dev/null)
-popd
-endgroup
-
-
-begingroup "Configure wine32on64-${CROSS_OVER_VERSION}"
-mkdir -p ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-${WINE_CONFIGURE} \
-    CROSSCC="ccache i686-w64-mingw32-gcc" \
-    --prefix= \
-    --disable-loader \
-    --disable-tests \
-    --disable-winedbg \
-    --enable-win32on64 \
-    --without-alsa \
-    --without-capi \
-    --with-coreaudio \
-    --with-cups \
-    --without-dbus \
-    --without-fontconfig \
-    --with-freetype \
-    --with-gettext \
-    --without-gettextpo \
-    --without-gphoto \
-    --with-gnutls \
-    --without-gssapi \
-    --without-gstreamer \
-    --without-inotify \
-    --without-krb5 \
-    --with-mingw \
-    --without-netapi \
-    --without-openal \
-    --with-opencl \
-    --with-opengl \
-    --without-oss \
-    --with-pcap \
-    --with-pthread \
-    --without-pulse \
-    --without-sane \
-    --with-sdl \
-    --without-udev \
-    --with-unwind \
-    --without-usb \
-    --without-v4l2 \
-    --with-vulkan \
-    --with-wine64=${BUILDROOT}/wine64-${CROSS_OVER_VERSION} \
-    --without-x
-popd
-endgroup
-
-
-begingroup "Build wine32on64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-make -j$(sysctl -n hw.activecpu 2>/dev/null)
-popd
-endgroup
-
-
-begingroup "Install wine32on64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
-make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
 
