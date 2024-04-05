@@ -88,12 +88,21 @@ echo "archive_site_local https://packages-private.macports.org/:tbz2" | sudo tee
 # preferred_hosts has no effect on archive_site_local
 # See https://trac.macports.org/ticket/57720
 #echo "preferred_hosts packages.macports.org" | sudo tee -a /opt/local/etc/macports/macports.conf >/dev/null
+# Modify soruces.conf so macports-wine is first
+echo "file:///opt/macports-wine" | sudo tee /opt/local/etc/macports/sources.conf >/dev/null
+echo "rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]" | sudo tee -a /opt/local/etc/macports/sources.conf >/dev/null
 endgroup
 
 
 begingroup "Running postflight"
 # Create macports user
 sudo /opt/local/libexec/macports/postflight/postflight
+endgroup
+
+
+begingroup "Cloing macports-wine"
+cd /opt
+sudo git clone https://github.com/Gcenx/macports-wine.git
 endgroup
 
 
