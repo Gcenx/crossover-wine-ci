@@ -58,7 +58,7 @@ jobs:
             gettext-runtime \
             gnutls \
             gstreamer1 \
-            gstreamer1-plugins-base \
+            gstreamer1-gst-plugins-base \
             libinotify \
             moltenvk \
             libsdl2
