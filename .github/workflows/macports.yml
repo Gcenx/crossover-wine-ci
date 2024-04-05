@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        CROSS_OVER_VERSION: [23.0.1] # 23.0.0
+        CROSS_OVER_VERSION: [23.7.1] # 23.7.0, 23.6.0, 23.5.0, 23.0.1, 23.0.0
 
     runs-on: macos-latest
 
@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Bootstrap MacPorts
         run: . .github/workflows/bootstrap.sh
@@ -130,7 +130,7 @@ jobs:
           tar -czvf ${{ env.WINE_INSTALLATION }}.tar.gz ${{ env.WINE_INSTALLROOT }}
 
       - name: Upload Wine
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.WINE_INSTALLATION }}
           path: ${{ env.WINE_INSTALLATION }}.tar.gz
