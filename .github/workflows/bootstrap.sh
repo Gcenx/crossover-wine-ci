@@ -100,7 +100,7 @@ sudo /opt/local/libexec/macports/postflight/postflight
 endgroup
 
 
-begingroup "Cloing macports-wine"
+begingroup "Cloning macports-wine"
 cd /opt
 sudo git clone https://github.com/Gcenx/macports-wine.git
 endgroup
