@@ -107,5 +107,6 @@ endgroup
 
 
 begingroup "Updating PortIndex"
+sudo port sync
 sudo port sync -v
 endgroup
