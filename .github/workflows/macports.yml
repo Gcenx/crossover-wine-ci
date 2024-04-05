@@ -43,7 +43,7 @@ jobs:
           echo "/opt/local/bin" >> $GITHUB_PATH
           echo "/opt/local/sbin" >> $GITHUB_PATH
 
-      - name: Installing build dependencies
+      - name: Install build dependencies
         run: |
           sudo port install \
             bison \
@@ -51,7 +51,7 @@ jobs:
             mingw-w64 \
             pkgconfig
 
-      - name: Installing runtime dependencies
+      - name: Install runtime dependencies
         run: |
           sudo port install \
             freetype \
@@ -63,7 +63,7 @@ jobs:
             moltenvk \
             libsdl2
 
-      - name: Downloading Crossover Sources
+      - name: Download Crossover Sources
         run: |
           curl -o ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz ${{ env.CROSS_OVER_SOURCE_URL }}
 
@@ -71,7 +71,7 @@ jobs:
         run: |
           tar xf ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz
 
-      - name: Adding distversion.h
+      - name: Add distversion.h
         run: |
           cp distversion.h sources/wine/programs/winedbg/distversion.h
 
