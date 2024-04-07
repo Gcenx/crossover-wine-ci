@@ -18,7 +18,7 @@ endgroup() {
 export GITHUB_WORKSPACE=$(pwd)
 
 if [ -z "$CROSS_OVER_VERSION" ]; then
-    export CROSS_OVER_VERSION=23.0.1
+    export CROSS_OVER_VERSION=23.7.1
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
@@ -88,7 +88,7 @@ tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
 endgroup
 
 
-+begingroup "Add distversion.h"
+begingroup "Add distversion.h"
 cp ${GITHUB_WORKSPACE}/distversion.h ${GITHUB_WORKSPACE}/sources/wine/include/distversion.h
 endgroup
 
