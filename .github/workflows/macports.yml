@@ -45,7 +45,7 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          sudo port install \
+          sudo port install build_arch=x86_64 \
             bison \
             gettext \
             mingw-w64 \
@@ -53,7 +53,7 @@ jobs:
 
       - name: Install runtime dependencies
         run: |
-          sudo port install \
+          sudo port install build_arch=x86_64 \
             freetype \
             gettext-runtime \
             gnutls \
