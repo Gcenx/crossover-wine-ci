@@ -85,7 +85,7 @@ echo "host_blacklist *.distfiles.macports.org *.packages.macports.org" | sudo te
 # Also try downloading archives from the private server
 echo "archive_site_local https://packages-private.macports.org/:tbz2" | sudo tee -a /opt/local/etc/macports/macports.conf >/dev/null
 # Force install for target x86_64
-echo "build_arch=x86_64" | sudo tee -a /opt/local/etc/macports/macports.conf >/dev/null
+echo "build_arch x86_64" | sudo tee -a /opt/local/etc/macports/macports.conf >/dev/null
 # Prefer to get archives from the public server instead of the private server
 # preferred_hosts has no effect on archive_site_local
 # See https://trac.macports.org/ticket/57720
