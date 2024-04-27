@@ -45,15 +45,15 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          sudo port install \
+          /usr/bin/env arch -x86_64 sudo port install \
             bison \
             gettext \
             mingw-w64 \
-            pkgconfig build_arch=x86_64
+            pkgconfig
 
       - name: Install runtime dependencies
         run: |
-          sudo port install \
+          /usr/bin/env arch -x86_64 sudo port install \
             freetype \
             gettext-runtime \
             gnutls \
@@ -61,7 +61,7 @@ jobs:
             gstreamer1-gst-plugins-base \
             libinotify \
             moltenvk \
-            libsdl2 build_arch=x86_64
+            libsdl2
 
       - name: Download Crossover Sources
         run: |
