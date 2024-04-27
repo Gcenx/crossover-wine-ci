@@ -55,11 +55,11 @@ begingroup "Uninstalling Homebrew"
 # Move directories to /opt/off
 echo "Moving directories..."
 sudo mkdir /opt/off
-/usr/bin/sudo /usr/bin/find /usr/local -mindepth 1 -maxdepth 1 -type d -print -exec /bin/mv {} /opt/off/ \;
+/usr/bin/sudo /usr/bin/find /opt/homebrew -mindepth 1 -maxdepth 1 -type d -print -exec /bin/mv {} /opt/off/ \;
 
 # Unlink files
 echo "Removing files..."
-/usr/bin/sudo /usr/bin/find /usr/local -mindepth 1 -maxdepth 1 -type f -print -delete
+/usr/bin/sudo /usr/bin/find /opt/homebrew -mindepth 1 -maxdepth 1 -type f -print -delete
 
 # Rehash to forget about the deleted files
 hash -r
