@@ -54,14 +54,15 @@ jobs:
 
       - name: Install runtime dependencies
         run: |
-          sudo port install freetype build_arch=x86_64
-          sudo port install gettext-runtime build_arch=x86_64
-          sudo port install gnutls build_arch=x86_64
-          sudo port install gstreamer1 build_arch=x86_64
-          sudo port install gstreamer1-gst-plugins-base build_arch=x86_64
-          sudo port install libinotify build_arch=x86_64
-          sudo port install moltenvk build_arch=x86_64
-          sudo port install libsdl2 build_arch=x86_64
+          sudo port install \
+            freetype \
+            gettext-runtime \
+            gnutls \
+            gstreamer1 \
+            gstreamer1-gst-plugins-base \
+            libinotify \
+            moltenvk \
+            libsdl2
 
       - name: Download Crossover Sources
         run: |
