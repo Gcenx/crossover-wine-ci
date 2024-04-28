@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  CC: clang
-  CXX: clang++
+  CC: clang -arch x86_64
+  CXX: clang++ -arch x86_64
   CPATH: /opt/local/include
   LIBRARY_PATH: /opt/local/lib
   CFLAGS: -g -O2 -Wno-deprecated-declarations
