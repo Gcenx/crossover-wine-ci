@@ -48,7 +48,6 @@ jobs:
           sudo port install \
             bison \
             gettext \
-            meson \
             mingw-w64 \
             pkgconfig
 
