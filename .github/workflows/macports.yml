@@ -8,8 +8,7 @@ env:
   CXX: clang++ -arch x86_64
   CPATH: /opt/local/include
   LIBRARY_PATH: /opt/local/lib
-  CFLAGS: -g -O2 -Wno-deprecated-declarations
-  CROSSCFLAGS: -g -O2
+  CFLAGS: -g -O2 -Wno-deprecated-declarations -Wno-format
   LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
   MACOSX_DEPLOYMENT_TARGET: 10.15.4
   WINE_CONFIGURE: $GITHUB_WORKSPACE/sources/wine/configure
