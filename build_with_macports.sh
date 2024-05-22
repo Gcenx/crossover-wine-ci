@@ -100,6 +100,7 @@ ${WINE_CONFIGURE} \
     --prefix= \
     --disable-tests \
     --enable-win64 \
+    --enable-archs=i386,x86_64 \
     --without-alsa \
     --without-capi \
     --with-coreaudio \
