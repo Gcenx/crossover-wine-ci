@@ -66,8 +66,8 @@ export CXX="${CC}++"
 export CPATH=/opt/local/include
 export LIBRARY_PATH=/opt/local/lib
 export MACOSX_DEPLOYMENT_TARGET=10.15.4
-export CROSSCFLAGS="-g -O2"
-export CFLAGS="${CROSSCFLAGS} -Wno-deprecated-declarations -Wno-format"
+export OPTFLAGS="-g -O2"
+export CFLAGS="${OPTFLAGS} -Wno-deprecated-declarations -Wno-format"
 export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib"
 
 export ac_cv_lib_soname_vulkan=""
