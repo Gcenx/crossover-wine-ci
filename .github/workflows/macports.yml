@@ -8,7 +8,7 @@ env:
   CXX: clang++ -arch x86_64
   CPATH: /opt/local/include
   LIBRARY_PATH: /opt/local/lib
-  CFLAGS: -g -O2 -Wno-deprecated-declarations -Wno-format
+  CFLAGS: -g -O2 -Wno-deprecated-declarations -Wno-format -Wno-incompatible-pointer-types -Wno-implicit-function-declaration -Wno-int-conversion
   LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
   MACOSX_DEPLOYMENT_TARGET: 10.15.4
   WINE_CONFIGURE: $GITHUB_WORKSPACE/sources/wine/configure
@@ -80,7 +80,8 @@ jobs:
           mkdir -p ${{ env.BUILDROOT }}/wine64
           pushd ${{ env.BUILDROOT }}/wine64
           ${{ env.WINE_CONFIGURE }} \
-            --build x86_64-apple-darwin19 \
+            --build=x86_64-apple-darwin \
+            --host=x86_64-apple-darwin \
             --prefix= \
             --disable-tests \
             --enable-win64 \
