@@ -10,7 +10,7 @@ env:
   LIBRARY_PATH: /opt/local/lib
   CFLAGS: -g -O2
   # gcc14.1 now sets -Werror-incompatible-pointer-types
-  CROSSCFLAGS: -g -O2 -Wno-incompatible-pointer-types
+  CROSSCFLAGS: -g -O2 -Wno-error=incompatible-pointer-types
   LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
   MACOSX_DEPLOYMENT_TARGET: 10.15.4
   WINE_CONFIGURE: $GITHUB_WORKSPACE/sources/wine/configure
@@ -22,8 +22,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Action only suports building 23.x
-        CROSS_OVER_VERSION: [23.7.1] # 23.7.0, 23.6.0, 23.5.0, 23.0.1, 23.0.0
+        # Action only suports building 23.0.0 or later
+        CROSS_OVER_VERSION: [23.7.1]
 
     runs-on: macos-latest
 
@@ -59,8 +59,6 @@ jobs:
             freetype \
             gettext-runtime \
             gnutls \
-            gstreamer1 \
-            gstreamer1-gst-plugins-base \
             libinotify \
             moltenvk \
             libsdl2
@@ -86,7 +84,6 @@ jobs:
             --host=x86_64-apple-darwin \
             --prefix= \
             --disable-tests \
-            --enable-win64 \
             --enable-archs=i386,x86_64 \
             --without-alsa \
             --without-capi \
@@ -100,7 +97,7 @@ jobs:
             --without-gphoto \
             --with-gnutls \
             --without-gssapi \
-            --with-gstreamer \
+            --without-gstreamer \
             --with-inotify \
             --without-krb5 \
             --with-mingw \
