@@ -81,7 +81,6 @@ jobs:
           pushd ${{ env.BUILDROOT }}/wine64
           ${{ env.WINE_CONFIGURE }} \
             --build=x86_64-apple-darwin \
-            --host=x86_64-apple-darwin \
             --prefix= \
             --disable-tests \
             --enable-archs=i386,x86_64 \
