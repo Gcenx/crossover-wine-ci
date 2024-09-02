@@ -6,7 +6,7 @@ on:
 env:
   CC: clang -arch x86_64
   CXX: clang++ -arch x86_64
-  CPATH: /opt/local/include:$GITHUB_WORKSPACE
+  CPATH: /opt/local/include
   LIBRARY_PATH: /opt/local/lib
   CFLAGS: -g -O2
   # gcc14.1 now sets -Werror-incompatible-pointer-types
@@ -70,6 +70,10 @@ jobs:
       - name: Extract Crossover Sources
         run: |
           tar xf ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz
+
+      - name: Add distversion.h
+        run: |
+          cp distversion.h sources/wine/programs/winedbg/distversion.h
 
       - name: Configure wine
         run: |
