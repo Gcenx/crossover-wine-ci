@@ -8,7 +8,7 @@ env:
   CXX: clang++ -arch x86_64
   CPATH: /opt/local/include
   LIBRARY_PATH: /opt/local/lib
-  CFLAGS: -g -O2 -I$GITHUB_WORKSPACE
+  CFLAGS: -g -O2 -I${{ github.workspace }}
   # gcc14.1 now sets -Werror-incompatible-pointer-types
   CROSSCFLAGS: -g -O2 -Wno-error=incompatible-pointer-types
   LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
