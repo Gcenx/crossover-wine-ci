@@ -43,7 +43,7 @@ export WINE_INSTALLATION=wine-cx${CROSS_OVER_VERSION}
 if ! command -v "/opt/local/bin/port" &> /dev/null
 then
     echo "</opt/local/bin/port> could not be found"
-    echo "A macports installation is required"
+    echo "A MacPorts installation is required"
     exit
 fi
 
@@ -57,7 +57,7 @@ endgroup
 
 
 begingroup "Installing dependencies libraries"
-sudo port install freetype gettext-runtime gnutls-devel moltenvk libpcap libsdl2
+sudo port install freetype gnutls-devel gettext-runtime libpcap libsdl2 moltenvk-latest
 endgroup
 
 
