@@ -57,15 +57,19 @@ endgroup
 
 
 begingroup "Installing dependencies libraries"
-sudo port install freetype gettext-runtime gnutls moltenvk libpcap libsdl2
+sudo port install freetype gettext-runtime gnutls-devel moltenvk libpcap libsdl2
 endgroup
 
 
 export CC="ccache clang"
 export CXX="${CC}++"
-export CPATH=/opt/local/include
-export LIBRARY_PATH=/opt/local/lib
-export MACOSX_DEPLOYMENT_TARGET=10.15.4
+export i386_CC="ccache i686-w64-mingw32-gcc"
+export x86_64_CC="ccache x86_64-w64-mingw32-gcc"
+
+export CPATH="/opt/local/include"
+export LIBRARY_PATH="/opt/local/lib"
+export MACOSX_DEPLOYMENT_TARGET="10.15.4"
+
 export OPTFLAGS="-g -O2"
 export CFLAGS="${OPTFLAGS} -Wno-deprecated-declarations -Wno-format"
 # gcc14.1 now sets -Werror-incompatible-pointer-types
