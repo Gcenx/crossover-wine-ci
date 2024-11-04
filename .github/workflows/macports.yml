@@ -4,8 +4,10 @@ on:
   workflow_dispatch:
 
 env:
-  CC: clang -arch x86_64
-  CXX: clang++ -arch x86_64
+  CC: ccache clang -arch x86_64
+  CXX: ccache clang++ -arch x86_64
+  i386_CC: ccache i686-w64-mingw32-gcc
+  x86_64_CC: ccache x86_64-w64-mingw32-gcc
   CPATH: /opt/local/include
   LIBRARY_PATH: /opt/local/lib
   CFLAGS: -g -O2
@@ -49,6 +51,7 @@ jobs:
         run: |
           sudo port install \
             bison \
+            ccache \
             gettext \
             mingw-w64 \
             pkgconfig
