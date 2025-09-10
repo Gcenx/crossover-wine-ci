@@ -17,9 +17,9 @@ endgroup() {
 
 export GITHUB_WORKSPACE=$(pwd)
 
-# Only suports building 23.0.0 or later
+# Only suports building 25.1.0 or later
 if [ -z "$CROSS_OVER_VERSION" ]; then
-    export CROSS_OVER_VERSION=23.7.1
+    export CROSS_OVER_VERSION="25.1.0"
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
@@ -71,10 +71,9 @@ export CPATH="/opt/local/include"
 export LIBRARY_PATH="/opt/local/lib"
 export MACOSX_DEPLOYMENT_TARGET="10.15.4"
 
-export OPTFLAGS="-g -O2"
+export OPTFLAGS="-O2"
 export CFLAGS="${OPTFLAGS} -Wno-deprecated-declarations -Wno-format"
-# gcc14.1 now sets -Werror-incompatible-pointer-types
-export CROSSCFLAGS="${OPTFLAGS} -Wno-incompatible-pointer-types"
+export CROSSCFLAGS="${OPTFLAGS}"
 export LDFLAGS="-Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib"
 
 export ac_cv_lib_soname_vulkan=""
