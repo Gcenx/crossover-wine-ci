@@ -10,11 +10,10 @@ env:
   x86_64_CC: ccache x86_64-w64-mingw32-gcc
   CPATH: /opt/local/include
   LIBRARY_PATH: /opt/local/lib
-  CFLAGS: -g -O2
-  # gcc14.1 now sets -Werror-incompatible-pointer-types
-  CROSSCFLAGS: -g -O2 -Wno-error=incompatible-pointer-types
+  CFLAGS: -O2
+  CROSSCFLAGS: -O2
   LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
-  MACOSX_DEPLOYMENT_TARGET: 10.15.4
+  MACOSX_DEPLOYMENT_TARGET: 10.15
   WINE_CONFIGURE: $GITHUB_WORKSPACE/sources/wine/configure
   BUILDROOT: $GITHUB_WORKSPACE/build
   WINE_INSTALLROOT: install
@@ -24,8 +23,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Action only suports building 23.0.0 or later
-        CROSS_OVER_VERSION: [23.7.1]
+        # Action only suports building 25.1.0 or later
+        CROSS_OVER_VERSION: [25.1.0]
 
     runs-on: macos-latest
 
