@@ -10,11 +10,11 @@ env:
   x86_64_CC: ccache x86_64-w64-mingw32-gcc
   CPATH: /opt/local/include
   LIBRARY_PATH: /opt/local/lib
-  CFLAGS: -g -O2
+  CFLAGS: -O2
   # gcc14.1 now sets -Werror-incompatible-pointer-types
-  CROSSCFLAGS: -g -O2 -Wno-error=incompatible-pointer-types
+  CROSSCFLAGS: -O2 -Wno-error=incompatible-pointer-types
   LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
-  MACOSX_DEPLOYMENT_TARGET: 10.15.4
+  MACOSX_DEPLOYMENT_TARGET: 10.15
   WINE_CONFIGURE: $GITHUB_WORKSPACE/sources/wine/configure
   BUILDROOT: $GITHUB_WORKSPACE/build
   WINE_INSTALLROOT: install
@@ -24,15 +24,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Action only suports building 23.0.0 or later
-        CROSS_OVER_VERSION: [23.7.1]
+        # Action only suports building 25.1.0 or later
+        CROSS_OVER_VERSION: [25.1.0]
 
     runs-on: macos-latest
 
     env:
       CROSS_OVER_SOURCE_URL: https://media.codeweavers.com/pub/crossover/source/crossover-sources-${{ matrix.CROSS_OVER_VERSION }}.tar.gz
       CROSS_OVER_LOCAL_FILE: crossover-sources-${{ matrix.CROSS_OVER_VERSION }}
-      WINE_INSTALLATION: wine-cx-${{ matrix.CROSS_OVER_VERSION }}
+      WINE_INSTALLATION: winecx-${{ matrix.CROSS_OVER_VERSION }}
 
     steps:
       - name: Checkout
@@ -80,8 +80,8 @@ jobs:
 
       - name: Configure wine
         run: |
-          mkdir -p ${{ env.BUILDROOT }}/wine64
-          pushd ${{ env.BUILDROOT }}/wine64
+          mkdir -p ${{ env.BUILDROOT }}/winecx
+          pushd ${{ env.BUILDROOT }}/winecx
           ${{ env.WINE_CONFIGURE }} \
             --build=x86_64-apple-darwin \
             --prefix= \
@@ -105,7 +105,7 @@ jobs:
             --with-mingw \
             --without-netapi \
             --with-opencl \
-            --with-opengl \
+            --without-opengl \
             --without-oss \
             --with-pcap \
             --with-pthread \
@@ -122,13 +122,13 @@ jobs:
 
       - name: Build wine
         run: |
-          pushd ${{ env.BUILDROOT }}/wine64
+          pushd ${{ env.BUILDROOT }}/winecx
           make -j$(sysctl -n hw.ncpu 2>/dev/null)
           popd
 
       - name: Install wine
         run: |
-          pushd ${{ env.BUILDROOT }}/wine64
+          pushd ${{ env.BUILDROOT }}/winecx
           make install-lib DESTDIR="$GITHUB_WORKSPACE/${{ env.WINE_INSTALLROOT }}"
           popd
 
