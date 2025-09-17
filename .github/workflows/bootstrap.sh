@@ -15,7 +15,7 @@ endgroup() {
     printtag "endgroup"
 }
 
-MACPORTS_VERSION=2.10.7
+MACPORTS_VERSION="2.11.5"
 
 OS_MAJOR=$(uname -r | cut -f 1 -d .)
 OS_ARCH=$(uname -m)
@@ -104,7 +104,7 @@ endgroup
 
 begingroup "Cloning macports-wine"
 cd /opt
-sudo git clone https://github.com/Gcenx/macports-wine.git
+sudo git clone --depth=1 https://github.com/Gcenx/macports-wine.git
 endgroup
 
 

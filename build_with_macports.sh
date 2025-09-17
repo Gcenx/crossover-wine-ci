@@ -17,9 +17,9 @@ endgroup() {
 
 export GITHUB_WORKSPACE=$(pwd)
 
-# Only suports building 23.0.0 or later
+# Only suports building 25.1.0 or later
 if [ -z "$CROSS_OVER_VERSION" ]; then
-    export CROSS_OVER_VERSION=23.7.1
+    export CROSS_OVER_VERSION="25.1.0"
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
 fi
 
@@ -35,7 +35,6 @@ export BUILDROOT=$GITHUB_WORKSPACE/build
 
 # target directory for installation
 export INSTALLROOT=$GITHUB_WORKSPACE/install
-export PACKAGE_UPLOAD=$GITHUB_WORKSPACE/upload
 
 # artifact name
 export WINE_INSTALLATION=wine-cx${CROSS_OVER_VERSION}
@@ -69,9 +68,9 @@ export x86_64_CC="ccache x86_64-w64-mingw32-gcc"
 
 export CPATH="/opt/local/include"
 export LIBRARY_PATH="/opt/local/lib"
-export MACOSX_DEPLOYMENT_TARGET="10.15.4"
+export MACOSX_DEPLOYMENT_TARGET="10.15"
 
-export OPTFLAGS="-g -O2"
+export OPTFLAGS="-O2"
 export CFLAGS="${OPTFLAGS} -Wno-deprecated-declarations -Wno-format"
 # gcc14.1 now sets -Werror-incompatible-pointer-types
 export CROSSCFLAGS="${OPTFLAGS} -Wno-incompatible-pointer-types"
@@ -100,9 +99,9 @@ cp ${GITHUB_WORKSPACE}/distversion.h ${GITHUB_WORKSPACE}/sources/wine/programs/w
 endgroup
 
 
-begingroup "Configure wine64-${CROSS_OVER_VERSION}"
-mkdir -p ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
-pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
+begingroup "Configure winecx-${CROSS_OVER_VERSION}"
+mkdir -p ${BUILDROOT}/winecx-${CROSS_OVER_VERSION}
+pushd ${BUILDROOT}/winecx-${CROSS_OVER_VERSION}
 ${WINE_CONFIGURE} \
     --prefix= \
     --disable-tests \
@@ -126,7 +125,7 @@ ${WINE_CONFIGURE} \
     --with-mingw \
     --without-netapi \
     --with-opencl \
-    --with-opengl \
+    --without-opengl \
     --without-oss \
     --with-pcap \
     --with-pthread \
@@ -143,28 +142,15 @@ popd
 endgroup
 
 
-begingroup "Build wine64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
+begingroup "Build winecx-${CROSS_OVER_VERSION}"
+pushd ${BUILDROOT}/winecx-${CROSS_OVER_VERSION}
 make -j$(sysctl -n hw.ncpu 2>/dev/null)
 popd
 endgroup
 
 
-begingroup "Install wine64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine64-${CROSS_OVER_VERSION}
+begingroup "Install winecx-${CROSS_OVER_VERSION}"
+pushd ${BUILDROOT}/winecx-${CROSS_OVER_VERSION}
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
-endgroup
-
-
-begingroup "Tar Wine"
-pushd ${INSTALLROOT}
-tar -czvf ${WINE_INSTALLATION}.tar.gz ${WINE_INSTALLATION}
-popd
-endgroup
-
-
-begingroup "Upload Wine"
-mkdir -p ${PACKAGE_UPLOAD}
-cp ${INSTALLROOT}/${WINE_INSTALLATION}.tar.gz ${PACKAGE_UPLOAD}/
 endgroup
