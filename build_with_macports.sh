@@ -28,7 +28,7 @@ export CROSS_OVER_SOURCE_URL=https://media.codeweavers.com/pub/crossover/source/
 export CROSS_OVER_LOCAL_FILE=crossover-${CROSS_OVER_VERSION}
 
 # directories / files inside the downloaded tar file directory structure
-export WINE_CONFIGURE=$GITHUB_WORKSPACE/sources/wine/configure
+export WINE_CONFIGURE=$GITHUB_WORKSPACE/wine/configure
 
 # build directories
 export BUILDROOT=$GITHUB_WORKSPACE/build
@@ -87,15 +87,10 @@ fi
 
 
 begingroup "Extracting $CROSS_OVER_LOCAL_FILE"
-if [[ -d "${GITHUB_WORKSPACE}/sources" ]]; then
-    rm -rf ${GITHUB_WORKSPACE}/sources
+if [[ -d "${GITHUB_WORKSPACE}/wine" ]]; then
+    rm -rf ${GITHUB_WORKSPACE}/wine
 fi
-tar xf ${CROSS_OVER_LOCAL_FILE}.tar.gz
-endgroup
-
-
-begingroup "Add distversion.h"
-cp ${GITHUB_WORKSPACE}/distversion.h ${GITHUB_WORKSPACE}/sources/wine/programs/winedbg/distversion.h
+tar --strip-components=1 -xf ${CROSS_OVER_LOCAL_FILE}.tar.gz sources/wine
 endgroup
 
 
@@ -112,6 +107,7 @@ ${WINE_CONFIGURE} \
     --with-coreaudio \
     --with-cups \
     --without-dbus \
+    --without-ffmpeg \
     --without-fontconfig \
     --with-freetype \
     --with-gettext \
@@ -137,6 +133,7 @@ ${WINE_CONFIGURE} \
     --without-usb \
     --without-v4l2 \
     --with-vulkan \
+    --without-wayland \
     --without-x
 popd
 endgroup

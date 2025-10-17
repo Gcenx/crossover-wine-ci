@@ -15,7 +15,7 @@ env:
   CROSSCFLAGS: -O2 -Wno-error=incompatible-pointer-types
   LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
   MACOSX_DEPLOYMENT_TARGET: 10.15
-  WINE_CONFIGURE: $GITHUB_WORKSPACE/sources/wine/configure
+  WINE_CONFIGURE: $GITHUB_WORKSPACE/wine/configure
   BUILDROOT: $GITHUB_WORKSPACE/build
   WINE_INSTALLROOT: install
 
@@ -72,11 +72,7 @@ jobs:
 
       - name: Extract Crossover Sources
         run: |
-          tar xf ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz
-
-      - name: Add distversion.h
-        run: |
-          cp distversion.h sources/wine/programs/winedbg/distversion.h
+          tar --strip-components=1 -xf ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz sources/wine
 
       - name: Configure wine
         run: |
@@ -92,6 +88,7 @@ jobs:
             --with-coreaudio \
             --with-cups \
             --without-dbus \
+            --without-ffmpeg \
             --without-fontconfig \
             --with-freetype \
             --with-gettext \
@@ -117,6 +114,7 @@ jobs:
             --without-usb \
             --without-v4l2 \
             --with-vulkan \
+            --without-wayland \
             --without-x
           popd
 
