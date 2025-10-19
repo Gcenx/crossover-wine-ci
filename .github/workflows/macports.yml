@@ -127,7 +127,7 @@ jobs:
       - name: Install wine
         run: |
           pushd ${{ env.BUILDROOT }}/winecx
-          make install-lib DESTDIR="$GITHUB_WORKSPACE/${{ env.WINE_INSTALLROOT }}"
+          make install-image DESTDIR="$GITHUB_WORKSPACE/${{ env.WINE_INSTALLROOT }}"
           popd
 
       - name: Tar wine
