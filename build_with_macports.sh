@@ -148,6 +148,6 @@ endgroup
 
 begingroup "Install winecx-${CROSS_OVER_VERSION}"
 pushd ${BUILDROOT}/winecx-${CROSS_OVER_VERSION}
-make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
+make install-image DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
