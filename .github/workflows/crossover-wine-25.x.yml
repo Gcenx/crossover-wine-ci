@@ -1,4 +1,4 @@
-name: macports
+name: crossover-wine-25.x
 
 on:
   workflow_dispatch:
