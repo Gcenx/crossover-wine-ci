@@ -1,0 +1,148 @@
+name: crossover-wine-24.x
+
+on:
+  workflow_dispatch:
+
+env:
+  CC: ccache clang -arch x86_64
+  CXX: ccache clang++ -arch x86_64
+  i386_CC: ccache i686-w64-mingw32-gcc
+  x86_64_CC: ccache x86_64-w64-mingw32-gcc
+  CPATH: /opt/local/include
+  LIBRARY_PATH: /opt/local/lib
+  CFLAGS: -O2
+  # gcc14.1 now sets -Werror-incompatible-pointer-types
+  # gcc15 defaults to gnu23
+  CROSSCFLAGS: -O2 -Wno-error=incompatible-pointer-types -std=gnu17
+  LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
+  MACOSX_DEPLOYMENT_TARGET: 10.15
+  WINE_CONFIGURE: $GITHUB_WORKSPACE/wine/configure
+  BUILDROOT: $GITHUB_WORKSPACE/build
+  WINE_INSTALLROOT: install
+
+jobs:
+  wine-crossover:
+    strategy:
+      fail-fast: false
+      matrix:
+        # Action only suports building 24.0.7
+        CROSS_OVER_VERSION: [24.0.7]
+
+    runs-on: macos-latest
+
+    env:
+      CROSS_OVER_SOURCE_URL: https://media.codeweavers.com/pub/crossover/source/crossover-sources-${{ matrix.CROSS_OVER_VERSION }}.tar.gz
+      CROSS_OVER_LOCAL_FILE: crossover-sources-${{ matrix.CROSS_OVER_VERSION }}
+      WINE_INSTALLATION: winecx-${{ matrix.CROSS_OVER_VERSION }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bootstrap MacPorts
+        run: . .github/workflows/bootstrap.sh
+
+      - name: Adding MacPorts into $PATH
+        run: |
+          set -eu
+          echo "/opt/local/bin" >> $GITHUB_PATH
+          echo "/opt/local/sbin" >> $GITHUB_PATH
+
+      - name: Install build dependencies
+        run: |
+          sudo port install \
+            bison \
+            ccache \
+            gettext \
+            mingw-w64 \
+            pkgconfig
+
+      - name: Install runtime dependencies
+        run: |
+          sudo port install \
+            freetype \
+            gettext-runtime \
+            gnutls-devel \
+            libinotify \
+            moltenvk \
+            libsdl2
+
+      - name: Download Crossover Sources
+        run: |
+          curl -o ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz ${{ env.CROSS_OVER_SOURCE_URL }}
+
+      - name: Extract Crossover Sources
+        run: |
+          tar --strip-components=1 -xf ${{ env.CROSS_OVER_LOCAL_FILE }}.tar.gz sources/wine
+
+      - name: Apply patches
+        run: |
+          pushd wine
+          patch -p1 < ${GITHUB_WORKSPACE}/CX24.0.7-MR5871.patch
+          popd
+
+      - name: Configure wine
+        run: |
+          mkdir -p ${{ env.BUILDROOT }}/winecx
+          pushd ${{ env.BUILDROOT }}/winecx
+          ${{ env.WINE_CONFIGURE }} \
+            --build=x86_64-apple-darwin \
+            --prefix= \
+            --disable-tests \
+            --enable-archs=i386,x86_64 \
+            --without-alsa \
+            --without-capi \
+            --with-coreaudio \
+            --with-cups \
+            --without-dbus \
+            --without-ffmpeg \
+            --without-fontconfig \
+            --with-freetype \
+            --with-gettext \
+            --without-gettextpo \
+            --without-gphoto \
+            --with-gnutls \
+            --without-gssapi \
+            --without-gstreamer \
+            --with-inotify \
+            --without-krb5 \
+            --with-mingw \
+            --without-netapi \
+            --with-opencl \
+            --without-opengl \
+            --without-oss \
+            --with-pcap \
+            --with-pthread \
+            --without-pulse \
+            --without-sane \
+            --with-sdl \
+            --without-udev \
+            --with-unwind \
+            --without-usb \
+            --without-v4l2 \
+            --with-vulkan \
+            --without-wayland \
+            --without-x
+          popd
+
+      - name: Build wine
+        run: |
+          pushd ${{ env.BUILDROOT }}/winecx
+          make -j$(sysctl -n hw.ncpu 2>/dev/null)
+          popd
+
+      - name: Install wine
+        run: |
+          pushd ${{ env.BUILDROOT }}/winecx
+          make install-image DESTDIR="$GITHUB_WORKSPACE/${{ env.WINE_INSTALLROOT }}"
+          popd
+
+      - name: Tar wine
+        run: |
+          tar -czvf ${{ env.WINE_INSTALLATION }}.tar.gz ${{ env.WINE_INSTALLROOT }}
+
+      - name: Uploading wine
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.WINE_INSTALLATION }}
+          path: ${{ env.WINE_INSTALLATION }}.tar.gz
