@@ -14,7 +14,7 @@ env:
   # gcc14.1 now sets -Werror-incompatible-pointer-types
   # gcc15 defaults to gnu23
   CROSSCFLAGS: -O2 -Wno-error=incompatible-pointer-types -std=gnu17
-  LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../ -Wl,-rpath,/opt/local/lib
+  LDFLAGS: -Wl,-headerpad_max_install_names -Wl,-rpath,@loader_path/../../
   MACOSX_DEPLOYMENT_TARGET: 10.15
   WINE_CONFIGURE: $GITHUB_WORKSPACE/wine/configure
   BUILDROOT: $GITHUB_WORKSPACE/build
@@ -136,6 +136,13 @@ jobs:
         run: |
           pushd ${{ env.BUILDROOT }}/winecx
           make install-image DESTDIR="$GITHUB_WORKSPACE/${{ env.WINE_INSTALLROOT }}"
+          popd
+
+      - name: Fixup wine-preloader
+        run: |
+          pushd ${{ env.WINE_INSTALLROOT }}/bin
+          /usr/bin/install_name_tool -delete_rpath @loader_path/../../ wine-preloader
+          /usr/bin/codesign --force --sign - wine-preloader          
           popd
 
       - name: Tar wine
