@@ -91,7 +91,7 @@ echo "build_arch x86_64" | sudo tee -a /opt/local/etc/macports/macports.conf >/d
 # See https://trac.macports.org/ticket/57720
 #echo "preferred_hosts packages.macports.org" | sudo tee -a /opt/local/etc/macports/macports.conf >/dev/null
 # Modify soruces.conf so macports-wine is first
-echo "file:///$GITHUB_WORKSPACE/ports" | sudo tee /opt/local/etc/macports/sources.conf >/dev/null
+echo "file:///opt/macports-mingw-overrides" | sudo tee /opt/local/etc/macports/sources.conf >/dev/null
 echo "file:///opt/macports-wine" | sudo tee -a /opt/local/etc/macports/sources.conf >/dev/null
 echo "rsync://rsync.macports.org/macports/release/tarballs/ports.tar [default]" | sudo tee -a /opt/local/etc/macports/sources.conf >/dev/null
 endgroup
@@ -105,6 +105,7 @@ endgroup
 
 begingroup "Cloning macports-wine"
 cd /opt
+sudo git clone --depth=1 https://github.com/Gcenx/macports-mingw-overrides.git
 sudo git clone --depth=1 https://github.com/Gcenx/macports-wine.git
 endgroup
 
