@@ -18,6 +18,7 @@ endgroup() {
 export GITHUB_WORKSPACE=$(pwd)
 
 # Only suports building 25.1.0 or later
+# crossover-sources-25.1.0 & crossover-25.1.1 wine is identical
 if [ -z "$CROSS_OVER_VERSION" ]; then
     export CROSS_OVER_VERSION="25.1.0"
     echo "CROSS_OVER_VERSION not set building crossover-wine-${CROSS_OVER_VERSION}"
