@@ -25,6 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         # Action only suports building 25.1.0 or later
+        # crossover-sources-25.1.0 & crossover-25.1.1 wine is identical
         CROSS_OVER_VERSION: [25.1.0]
 
     runs-on: macos-latest
